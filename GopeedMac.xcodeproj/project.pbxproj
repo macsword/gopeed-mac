@@ -1,0 +1,493 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0518AF18F3ABC8DF3F4FEBE7 /* libgopeed.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CD47903E4CA9646C0A52A2BE /* libgopeed.dylib */; };
+		2076A505CBFE2CB6ADF79FDD /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4170DF74D17C1F6ED97C253 /* Theme.swift */; };
+		4601C4D4376B27B345C0F898 /* AddDownloadSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98290E0D7CC6F90940253818 /* AddDownloadSheet.swift */; };
+		4955F10BDBCD2B440EF8E47C /* FileKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840BFCE974BE16F9608FA69B /* FileKind.swift */; };
+		4D3CD493ABB6FF203EB4F6E7 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEDE2E8A9DDB96BE78A6D916 /* Models.swift */; };
+		4F08EC2B625F13AC3C38CDE2 /* GopeedEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C32AB4ABA1285F0868D347E /* GopeedEngine.swift */; };
+		5E8B6EF59E3C2909543FC6E9 /* WindowChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DBF995B812913986C1E195 /* WindowChrome.swift */; };
+		60094F8C9C35CA0EA270F523 /* GopeedClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42AF6A3DEBEB0A52F96A38B2 /* GopeedClient.swift */; };
+		653A4929A14DF10A0E82D167 /* InspectorPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51928F4B091E89E1A41D1AC4 /* InspectorPane.swift */; };
+		677E54CC979A3F47996A81B1 /* DownloadListPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB07614CA897F04687B7556 /* DownloadListPane.swift */; };
+		74DA2EC14ED737CBA68040F6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A06DB930E69A3D5B872A337E /* SettingsView.swift */; };
+		752D7748AC2B43417700EB75 /* DownloadStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAB928F5EC84C217961F629B /* DownloadStore.swift */; };
+		7940263AF6BDB12EF690E753 /* DownloadCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881667E63039CC32691CAC8C /* DownloadCard.swift */; };
+		8912E1F173B279743F03FE3D /* SpeedChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5F8140E02C56577876728F /* SpeedChart.swift */; };
+		99EEA85330E9ABC81FC277BF /* FluidTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E47A69B0C1519CB1E682C4 /* FluidTabBar.swift */; };
+		9D3E0684B11D80FA50981933 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3ED7F121BACA600F208E86 /* ContentView.swift */; };
+		A7CA1D779A024C2FA3FBF761 /* ChunkGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7AE620BEB17EE544A57EEE /* ChunkGrid.swift */; };
+		AEE155368C08BD6B91CDF47C /* CircularProgressRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B176DFAC60EA9194F01B65 /* CircularProgressRing.swift */; };
+		C77D5B4D40C73EDE66381C18 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0610C17F4B45C0A0505883B7 /* Assets.xcassets */; };
+		D81A932EC09A1D94390D1AB3 /* GopeedMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1C465FD1A83C6C1E6FF346 /* GopeedMacApp.swift */; };
+		E0931E96C767AD07B693B5B0 /* libgopeed.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD47903E4CA9646C0A52A2BE /* libgopeed.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1C09A19D0BAE98D4D275537E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				E0931E96C767AD07B693B5B0 /* libgopeed.dylib in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0610C17F4B45C0A0505883B7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		14C039CA378D97F56DA692A4 /* GopeedMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GopeedMac.entitlements; sourceTree = "<group>"; };
+		42AF6A3DEBEB0A52F96A38B2 /* GopeedClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GopeedClient.swift; sourceTree = "<group>"; };
+		43E47A69B0C1519CB1E682C4 /* FluidTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FluidTabBar.swift; sourceTree = "<group>"; };
+		4A3ED7F121BACA600F208E86 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		4DAF73C97CC41305C306893E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		51928F4B091E89E1A41D1AC4 /* InspectorPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectorPane.swift; sourceTree = "<group>"; };
+		64B176DFAC60EA9194F01B65 /* CircularProgressRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressRing.swift; sourceTree = "<group>"; };
+		7AB07614CA897F04687B7556 /* DownloadListPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListPane.swift; sourceTree = "<group>"; };
+		7C32AB4ABA1285F0868D347E /* GopeedEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GopeedEngine.swift; sourceTree = "<group>"; };
+		840BFCE974BE16F9608FA69B /* FileKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileKind.swift; sourceTree = "<group>"; };
+		881667E63039CC32691CAC8C /* DownloadCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadCard.swift; sourceTree = "<group>"; };
+		8C5F8140E02C56577876728F /* SpeedChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedChart.swift; sourceTree = "<group>"; };
+		97DBF995B812913986C1E195 /* WindowChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowChrome.swift; sourceTree = "<group>"; };
+		98290E0D7CC6F90940253818 /* AddDownloadSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDownloadSheet.swift; sourceTree = "<group>"; };
+		A06DB930E69A3D5B872A337E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AC1C465FD1A83C6C1E6FF346 /* GopeedMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GopeedMacApp.swift; sourceTree = "<group>"; };
+		B4170DF74D17C1F6ED97C253 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		BF7AE620BEB17EE544A57EEE /* ChunkGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkGrid.swift; sourceTree = "<group>"; };
+		CD47903E4CA9646C0A52A2BE /* libgopeed.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgopeed.dylib; path = GopeedMac/Frameworks/libgopeed.dylib; sourceTree = "<group>"; };
+		D115D4A79F0B27C737B8FD8F /* GopeedMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GopeedMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DAB928F5EC84C217961F629B /* DownloadStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadStore.swift; sourceTree = "<group>"; };
+		DEDE2E8A9DDB96BE78A6D916 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		FD2F534EEF33E8DE4B191776 /* GopeedMac-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GopeedMac-Bridging-Header.h"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		204CBFEF44A60CCAB888B531 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0518AF18F3ABC8DF3F4FEBE7 /* libgopeed.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0082835FADA5C842D41E87E1 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				840BFCE974BE16F9608FA69B /* FileKind.swift */,
+				B4170DF74D17C1F6ED97C253 /* Theme.swift */,
+				97DBF995B812913986C1E195 /* WindowChrome.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		2B848BFE56C4810DDA7C739A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CD47903E4CA9646C0A52A2BE /* libgopeed.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3A4F117970221B85DFC44D6F /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				98290E0D7CC6F90940253818 /* AddDownloadSheet.swift */,
+				BF7AE620BEB17EE544A57EEE /* ChunkGrid.swift */,
+				64B176DFAC60EA9194F01B65 /* CircularProgressRing.swift */,
+				4A3ED7F121BACA600F208E86 /* ContentView.swift */,
+				881667E63039CC32691CAC8C /* DownloadCard.swift */,
+				7AB07614CA897F04687B7556 /* DownloadListPane.swift */,
+				43E47A69B0C1519CB1E682C4 /* FluidTabBar.swift */,
+				51928F4B091E89E1A41D1AC4 /* InspectorPane.swift */,
+				A06DB930E69A3D5B872A337E /* SettingsView.swift */,
+				8C5F8140E02C56577876728F /* SpeedChart.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		780EAD07603D98DD30B307C3 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				DAB928F5EC84C217961F629B /* DownloadStore.swift */,
+				42AF6A3DEBEB0A52F96A38B2 /* GopeedClient.swift */,
+				7C32AB4ABA1285F0868D347E /* GopeedEngine.swift */,
+				FD2F534EEF33E8DE4B191776 /* GopeedMac-Bridging-Header.h */,
+				DEDE2E8A9DDB96BE78A6D916 /* Models.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		8D519DD50EA6804FA4B2004C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D115D4A79F0B27C737B8FD8F /* GopeedMac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C89EE40E9D4D92319EDC92BE /* GopeedMac */ = {
+			isa = PBXGroup;
+			children = (
+				780EAD07603D98DD30B307C3 /* Engine */,
+				0082835FADA5C842D41E87E1 /* Theme */,
+				3A4F117970221B85DFC44D6F /* Views */,
+				0610C17F4B45C0A0505883B7 /* Assets.xcassets */,
+				14C039CA378D97F56DA692A4 /* GopeedMac.entitlements */,
+				AC1C465FD1A83C6C1E6FF346 /* GopeedMacApp.swift */,
+				4DAF73C97CC41305C306893E /* Info.plist */,
+			);
+			path = GopeedMac;
+			sourceTree = "<group>";
+		};
+		EFD373A51466E6F253C9FD0A = {
+			isa = PBXGroup;
+			children = (
+				C89EE40E9D4D92319EDC92BE /* GopeedMac */,
+				2B848BFE56C4810DDA7C739A /* Frameworks */,
+				8D519DD50EA6804FA4B2004C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		0E8345C4941922866FBE2D6F /* GopeedMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 56CA732C594AE6A7C56EDBED /* Build configuration list for PBXNativeTarget "GopeedMac" */;
+			buildPhases = (
+				EA18D96F2341CE46106BB07E /* Ensure Gopeed engine */,
+				0120322C0F6542443EF510BF /* Sources */,
+				9A5C9F87F3FB2D2566FBF5F8 /* Resources */,
+				204CBFEF44A60CCAB888B531 /* Frameworks */,
+				1C09A19D0BAE98D4D275537E /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GopeedMac;
+			packageProductDependencies = (
+			);
+			productName = GopeedMac;
+			productReference = D115D4A79F0B27C737B8FD8F /* GopeedMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		119A630F8D4E86AD536B3AE5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					0E8345C4941922866FBE2D6F = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 8C9F9A8D93376B83A4CB94C5 /* Build configuration list for PBXProject "GopeedMac" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = EFD373A51466E6F253C9FD0A;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 8D519DD50EA6804FA4B2004C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0E8345C4941922866FBE2D6F /* GopeedMac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9A5C9F87F3FB2D2566FBF5F8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C77D5B4D40C73EDE66381C18 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		EA18D96F2341CE46106BB07E /* Ensure Gopeed engine */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Ensure Gopeed engine";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\nif [ ! -f \"${PROJECT_DIR}/GopeedMac/Frameworks/libgopeed.dylib\" ]; then\n  \"${PROJECT_DIR}/Scripts/build-engine.sh\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0120322C0F6542443EF510BF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4601C4D4376B27B345C0F898 /* AddDownloadSheet.swift in Sources */,
+				A7CA1D779A024C2FA3FBF761 /* ChunkGrid.swift in Sources */,
+				AEE155368C08BD6B91CDF47C /* CircularProgressRing.swift in Sources */,
+				9D3E0684B11D80FA50981933 /* ContentView.swift in Sources */,
+				7940263AF6BDB12EF690E753 /* DownloadCard.swift in Sources */,
+				677E54CC979A3F47996A81B1 /* DownloadListPane.swift in Sources */,
+				752D7748AC2B43417700EB75 /* DownloadStore.swift in Sources */,
+				4955F10BDBCD2B440EF8E47C /* FileKind.swift in Sources */,
+				99EEA85330E9ABC81FC277BF /* FluidTabBar.swift in Sources */,
+				60094F8C9C35CA0EA270F523 /* GopeedClient.swift in Sources */,
+				4F08EC2B625F13AC3C38CDE2 /* GopeedEngine.swift in Sources */,
+				D81A932EC09A1D94390D1AB3 /* GopeedMacApp.swift in Sources */,
+				653A4929A14DF10A0E82D167 /* InspectorPane.swift in Sources */,
+				4D3CD493ABB6FF203EB4F6E7 /* Models.swift in Sources */,
+				74DA2EC14ED737CBA68040F6 /* SettingsView.swift in Sources */,
+				8912E1F173B279743F03FE3D /* SpeedChart.swift in Sources */,
+				2076A505CBFE2CB6ADF79FDD /* Theme.swift in Sources */,
+				5E8B6EF59E3C2909543FC6E9 /* WindowChrome.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		95368AB389F58FE2C1D045CB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		99E2C3DBC044D7FEB9C42C1F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = GopeedMac/GopeedMac.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"GopeedMac/Frameworks\"",
+				);
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/GopeedMac/Frameworks";
+				INFOPLIST_FILE = GopeedMac/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/GopeedMac/Frameworks";
+				OTHER_LDFLAGS = "$(inherited) -lgopeed";
+				PRODUCT_BUNDLE_IDENTIFIER = com.macsword.gopeedmac;
+				PRODUCT_NAME = GDM;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "GopeedMac/Engine/GopeedMac-Bridging-Header.h";
+			};
+			name = Release;
+		};
+		B7051A34912BC1683FD6FAC6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = GopeedMac/GopeedMac.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = NO;
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"GopeedMac/Frameworks\"",
+				);
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/GopeedMac/Frameworks";
+				INFOPLIST_FILE = GopeedMac/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/GopeedMac/Frameworks";
+				OTHER_LDFLAGS = "$(inherited) -lgopeed";
+				PRODUCT_BUNDLE_IDENTIFIER = com.macsword.gopeedmac;
+				PRODUCT_NAME = GDM;
+				SDKROOT = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "GopeedMac/Engine/GopeedMac-Bridging-Header.h";
+			};
+			name = Debug;
+		};
+		E6F09E2391A480B145AC9855 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		56CA732C594AE6A7C56EDBED /* Build configuration list for PBXNativeTarget "GopeedMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B7051A34912BC1683FD6FAC6 /* Debug */,
+				99E2C3DBC044D7FEB9C42C1F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8C9F9A8D93376B83A4CB94C5 /* Build configuration list for PBXProject "GopeedMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				95368AB389F58FE2C1D045CB /* Debug */,
+				E6F09E2391A480B145AC9855 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 119A630F8D4E86AD536B3AE5 /* Project object */;
+}

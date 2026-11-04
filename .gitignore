@@ -1,0 +1,9 @@
+.DS_Store
+xcuserdata/
+*.xcuserstate
+DerivedData/
+build/
+GopeedMac/Frameworks/libgopeed.dylib
+GopeedMac/Frameworks/libgopeed.h
+engine/host/gopeed-mac
+engine/gopeed/
