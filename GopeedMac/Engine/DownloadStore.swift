@@ -12,6 +12,7 @@ final class DownloadStore: ObservableObject {
         didSet { reconcileSelection() }
     }
     @Published var selection: DownloadTask.ID?
+    @Published var openCardActions: DownloadTask.ID?
     @Published var search = "" {
         didSet { reconcileSelection() }
     }
@@ -218,6 +219,9 @@ final class DownloadStore: ObservableObject {
         await run { try await client.delete(id: task.id, removeFiles: removeFiles) }
         if selection == task.id {
             selection = nil
+        }
+        if openCardActions == task.id {
+            openCardActions = nil
         }
     }
 

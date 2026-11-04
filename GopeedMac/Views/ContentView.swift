@@ -114,22 +114,8 @@ struct ContentView: View {
                 }
             }
 
-            HStack(spacing: 10) {
-                Image(systemName: "magnifyingglass")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Theme.iconSize, height: Theme.iconSize)
-                    .foregroundStyle(Theme.tertiary)
-                TextField("Search downloads...", text: $store.search)
-                    .textFieldStyle(.plain)
-                    .font(.system(size: 15))
-                    .foregroundStyle(.white)
-                    .background(.clear)
-            }
-            .padding(.horizontal, 22)
-            .frame(minWidth: 160, idealWidth: 200, maxWidth: 240)
-            .layoutPriority(1)
-            .sizedGlass(height: Theme.toolbarHeight, cornerRadius: Theme.toolbarHeight / 2)
+            SearchBar(text: $store.search)
+                .id("gdm.search")
 
             Menu {
                 Picker("Sort By", selection: $store.sort) {
@@ -159,5 +145,30 @@ struct ContentView: View {
         .padding(.top, 8)
         .padding(.trailing, 16)
         .padding(.bottom, 14)
+    }
+}
+
+private struct SearchBar: View {
+    @Binding var text: String
+    @FocusState private var focused: Bool
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .resizable()
+                .scaledToFit()
+                .frame(width: Theme.iconSize, height: Theme.iconSize)
+                .foregroundStyle(Theme.tertiary)
+            TextField("Search downloads...", text: $text)
+                .textFieldStyle(.plain)
+                .font(.system(size: 15))
+                .foregroundStyle(.white)
+                .background(.clear)
+                .focused($focused)
+        }
+        .padding(.horizontal, 22)
+        .frame(minWidth: 160, idealWidth: 200, maxWidth: 240)
+        .layoutPriority(1)
+        .sizedGlass(height: Theme.toolbarHeight, cornerRadius: Theme.toolbarHeight / 2)
     }
 }

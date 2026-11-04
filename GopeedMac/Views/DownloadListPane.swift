@@ -2,7 +2,6 @@ import SwiftUI
 
 struct DownloadListPane: View {
     @EnvironmentObject private var store: DownloadStore
-    @FocusState private var focusedTask: DownloadTask.ID?
 
     var body: some View {
         GeometryReader { geo in
@@ -41,8 +40,6 @@ struct DownloadListPane: View {
                 }
                 .scrollIndicators(.never)
                 .scrollClipFade()
-                .focusSection()
-                .defaultFocus($focusedTask, store.visibleTasks.first?.id)
 
                 HStack(spacing: 12) {
                     Button {
@@ -80,9 +77,10 @@ struct DownloadListPane: View {
                 .padding(.vertical, Theme.spaceLG)
             }
         }
-        .onAppear { focusFirstDownload() }
-        .onChange(of: store.visibleTasks.map(\.id)) { _, _ in
-            focusFirstDownload()
+        .onAppear {
+            if store.selection == nil {
+                store.selection = store.visibleTasks.first?.id
+            }
         }
     }
 
@@ -102,9 +100,16 @@ struct DownloadListPane: View {
                 task: task,
                 selected: store.selection == task.id,
                 layout: layout,
+                actionsOpen: store.openCardActions == task.id,
                 onSelect: {
                     store.selection = task.id
-                    focusedTask = task.id
+                },
+                onSetActionsOpen: { open in
+                    if open {
+                        store.openCardActions = task.id
+                    } else if store.openCardActions == task.id {
+                        store.openCardActions = nil
+                    }
                 },
                 onPause: { Task { await store.pause(task) } },
                 onResume: { Task { await store.resume(task) } },
@@ -113,20 +118,7 @@ struct DownloadListPane: View {
                 onDelete: { Task { await store.delete(task, removeFiles: true) } }
             )
             .equatable()
-            .focusable()
-            .focused($focusedTask, equals: task.id)
-            .focusEffectDisabled()
-        }
-    }
-
-    private func focusFirstDownload() {
-        let first = store.selection ?? store.visibleTasks.first?.id
-        guard let first else { return }
-        if store.selection == nil {
-            store.selection = first
-        }
-        if focusedTask == nil {
-            focusedTask = first
+            .focusable(false)
         }
     }
 }

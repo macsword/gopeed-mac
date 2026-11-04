@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 
 struct DownloadCard: View, Equatable {
@@ -7,12 +8,17 @@ struct DownloadCard: View, Equatable {
     }
 
     static func == (lhs: DownloadCard, rhs: DownloadCard) -> Bool {
-        lhs.task == rhs.task && lhs.selected == rhs.selected && lhs.layout == rhs.layout
+        lhs.task == rhs.task
+            && lhs.selected == rhs.selected
+            && lhs.layout == rhs.layout
+            && lhs.actionsOpen == rhs.actionsOpen
     }
     let task: DownloadTask
     let selected: Bool
     var layout: Layout = .list
+    let actionsOpen: Bool
     let onSelect: () -> Void
+    let onSetActionsOpen: (Bool) -> Void
     let onPause: () -> Void
     let onResume: () -> Void
     let onReveal: () -> Void
@@ -20,7 +26,8 @@ struct DownloadCard: View, Equatable {
     let onDelete: () -> Void
 
     @State private var ringHover = false
-    @State private var actionsOpen = false
+
+    private let actionsSpring = Animation.spring(response: 0.34, dampingFraction: 0.78)
 
     private var kind: FileKind { FileKind.kind(for: task.displayName) }
 
@@ -52,13 +59,15 @@ struct DownloadCard: View, Equatable {
             cornerRadius: Theme.cardRadius,
             tint: selected ? Color.black.opacity(0.22) : Color.black.opacity(0.36)
         )
-        .overlay(alignment: .topTrailing) {
+        .overlay(alignment: .trailing) {
             actionCluster
-                .padding(.top, layout == .grid ? Theme.spaceMD : 12)
                 .padding(.trailing, Theme.spaceMD)
         }
+        .background {
+            OutsideTapCloser(enabled: actionsOpen, onClose: closeActions)
+                .allowsHitTesting(false)
+        }
         .zIndex(actionsOpen ? 2 : 0)
-        .animation(.spring(response: 0.32, dampingFraction: 0.86), value: actionsOpen)
     }
 
     private var listContent: some View {
@@ -93,11 +102,21 @@ struct DownloadCard: View, Equatable {
 
     private func selectOrClose() {
         if actionsOpen {
-            withAnimation(.spring(response: 0.32, dampingFraction: 0.86)) {
-                actionsOpen = false
-            }
+            closeActions()
         } else {
             onSelect()
+        }
+    }
+
+    private func openActions() {
+        withAnimation(actionsSpring) {
+            onSetActionsOpen(true)
+        }
+    }
+
+    private func closeActions() {
+        withAnimation(actionsSpring) {
+            onSetActionsOpen(false)
         }
     }
 
@@ -160,24 +179,28 @@ struct DownloadCard: View, Equatable {
     }
 
     private var actionCluster: some View {
-        VStack(spacing: 6) {
+        ZStack {
             if actionsOpen {
-                circleAction("minus", help: "Remove from list", fill: Theme.toolbarFill) {
-                    actionsOpen = false
-                    onRemove()
+                VStack(spacing: 6) {
+                    circleAction("minus", help: "Remove from list", fill: Theme.toolbarFill) {
+                        closeActions()
+                        onRemove()
+                    }
+                    circleAction("folder", help: "Reveal in Finder", fill: Theme.toolbarFill) {
+                        closeActions()
+                        onReveal()
+                    }
+                    circleAction("trash", help: "Delete file", fill: Theme.danger.opacity(0.88)) {
+                        closeActions()
+                        onDelete()
+                    }
                 }
-                circleAction("folder", help: "Reveal in Finder", fill: Theme.toolbarFill) {
-                    actionsOpen = false
-                    onReveal()
-                }
-                circleAction("trash", help: "Delete file", fill: Theme.danger.opacity(0.88)) {
-                    actionsOpen = false
-                    onDelete()
-                }
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.46, anchor: .center).combined(with: .opacity),
+                    removal: .scale(scale: 0.54, anchor: .center).combined(with: .opacity)
+                ))
             } else {
-                Button {
-                    actionsOpen = true
-                } label: {
+                Button(action: openActions) {
                     Image(systemName: "ellipsis")
                         .resizable()
                         .scaledToFit()
@@ -190,12 +213,16 @@ struct DownloadCard: View, Equatable {
                 .buttonStyle(FullAreaButtonStyle())
                 .help("Actions")
                 .accessibilityLabel("Actions")
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.7, anchor: .center).combined(with: .opacity),
+                    removal: .scale(scale: 0.4, anchor: .center).combined(with: .opacity)
+                ))
             }
         }
-        .frame(width: 36, alignment: .top)
+        .frame(width: 36)
         .fixedSize()
         .allowsHitTesting(true)
-        .transition(.scale(scale: 0.72, anchor: .top).combined(with: .opacity))
+        .animation(actionsSpring, value: actionsOpen)
     }
 
     private func circleAction(_ symbol: String, help: String, fill: Color, action: @escaping () -> Void) -> some View {
@@ -258,5 +285,53 @@ struct DownloadCard: View, Equatable {
     private var ringColor: Color {
         if task.status == .done { return Theme.success }
         return kind.color
+    }
+}
+
+/// Dismisses the card action cluster when the user clicks anywhere outside it.
+private struct OutsideTapCloser: NSViewRepresentable {
+    var enabled: Bool
+    var onClose: () -> Void
+
+    func makeNSView(context: Context) -> MonitorView {
+        let view = MonitorView()
+        view.onClose = onClose
+        view.setEnabled(enabled)
+        return view
+    }
+
+    func updateNSView(_ view: MonitorView, context: Context) {
+        view.onClose = onClose
+        view.setEnabled(enabled)
+    }
+
+    final class MonitorView: NSView {
+        var onClose: () -> Void = {}
+        private var monitor: Any?
+
+        override func hitTest(_ point: NSPoint) -> NSView? { nil }
+
+        func setEnabled(_ enabled: Bool) {
+            if enabled {
+                guard monitor == nil else { return }
+                monitor = NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+                    guard let self else { return event }
+                    let local = self.convert(event.locationInWindow, from: nil)
+                    if !self.bounds.contains(local) {
+                        DispatchQueue.main.async { self.onClose() }
+                    }
+                    return event
+                }
+            } else if let monitor {
+                NSEvent.removeMonitor(monitor)
+                self.monitor = nil
+            }
+        }
+
+        deinit {
+            if let monitor {
+                NSEvent.removeMonitor(monitor)
+            }
+        }
     }
 }
