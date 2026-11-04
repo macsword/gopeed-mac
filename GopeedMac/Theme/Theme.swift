@@ -19,6 +19,14 @@ enum Theme {
     static let spaceXL: CGFloat = 40
 
     static let toolbarHeight: CGFloat = 60
+    static let tabItemWidth: CGFloat = 100
+    static let typeTabItemWidth: CGFloat = 60
+    static let iconSize: CGFloat = 20
+    static let typeTabIconSize: CGFloat = iconSize
+    static let settingsIconSize: CGFloat = iconSize
+    static let gridCardHeight: CGFloat = 320
+    static let listGridBreakpoint: CGFloat = 560
+    static let scrollFadeHeight: CGFloat = 44
     static let toolbarFill = Color.black.opacity(0.52)
     static let paneTint = Color.black.opacity(0.78)
 }
@@ -60,6 +68,30 @@ extension View {
             .clipShape(shape)
             .contentShape(shape)
     }
+
+    /// Soft fade at the top and bottom of a scroll view. Keep chrome (headers, buttons) outside this mask.
+    func scrollClipFade(height: CGFloat = Theme.scrollFadeHeight) -> some View {
+        self
+            .scrollEdgeEffectStyle(.soft, for: .top)
+            .scrollEdgeEffectStyle(.soft, for: .bottom)
+            .mask {
+                VStack(spacing: 0) {
+                    LinearGradient(
+                        colors: [.white.opacity(0), .white],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: height)
+                    Color.white
+                    LinearGradient(
+                        colors: [.white, .white.opacity(0)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: height)
+                }
+            }
+    }
 }
 
 /// `.plain` only hits the glyph. This fills the label’s frame so the whole pill/circle is clickable.
@@ -90,7 +122,7 @@ struct CapsuleActionButtonStyle: ButtonStyle {
         }()
         let foreground: Color = kind == .prominent ? Color.black : Color.white
         return configuration.label
-            .font(.system(size: 15, weight: .semibold))
+            .font(kind == .icon ? .system(size: Theme.settingsIconSize, weight: .semibold) : .system(size: 15, weight: .semibold))
             .labelStyle(.titleAndIcon)
             .lineLimit(1)
             .minimumScaleFactor(0.72)

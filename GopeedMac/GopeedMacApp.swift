@@ -19,7 +19,7 @@ struct GopeedMacApp: App {
         .windowToolbarStyle(.unified)
         .windowResizability(.contentMinSize)
         .windowBackgroundDragBehavior(.enabled)
-        .defaultSize(width: 1180, height: 760)
+        .defaultSize(width: 1380, height: 760)
         .commands {
             CommandGroup(replacing: .newItem) {
                 Button("New Download…") {
@@ -39,4 +39,6 @@ struct GopeedMacApp: App {
 
 extension Notification.Name {
     static let gopeedNewDownload = Notification.Name("gopeed.newDownload")
+    static let gdmDroppedLinks = Notification.Name("gdm.droppedLinks")
+    static let gdmDropTargeted = Notification.Name("gdm.dropTargeted")
 }

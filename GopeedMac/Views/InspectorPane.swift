@@ -19,10 +19,21 @@ struct InspectorPane: View {
                         }
                         .padding(.horizontal, Theme.spaceXL)
                         .padding(.top, Theme.spaceXL)
-                        .padding(.bottom, Theme.spaceMD)
+                        .padding(.bottom, Theme.spaceLG)
                     }
                     .scrollIndicators(.never)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .scrollEdgeEffectStyle(.soft, for: .bottom)
+                    .mask(alignment: .bottom) {
+                        VStack(spacing: 0) {
+                            Color.white
+                            LinearGradient(
+                                colors: [.white, .white.opacity(0)],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .frame(height: 44)
+                        }
+                    }
 
                     controls(task)
                         .padding(.horizontal, Theme.spaceXL)
@@ -73,6 +84,9 @@ struct InspectorPane: View {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(kind.color.opacity(0.2))
                 Image(systemName: kind.symbol)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Theme.iconSize, height: Theme.iconSize)
                     .foregroundStyle(kind.color)
             }
             .frame(width: 36, height: 36)
@@ -86,6 +100,9 @@ struct InspectorPane: View {
                         store.openURL(task)
                     } label: {
                         Image(systemName: "arrow.up.right.square")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: Theme.iconSize, height: Theme.iconSize)
                             .foregroundStyle(Theme.secondary)
                             .frame(width: 28, height: 28)
                             .contentShape(Rectangle())
@@ -126,6 +143,7 @@ struct InspectorPane: View {
         }()
         let visualTotal = connections.isEmpty ? 256 : total
         return ChunkGrid(completed: connections.isEmpty ? completed : completed, total: visualTotal)
+            .frame(maxWidth: .infinity)
     }
 
     private func meta(_ task: DownloadTask) -> some View {
@@ -144,6 +162,9 @@ struct InspectorPane: View {
                 Spacer()
                 Button { store.reveal(task) } label: {
                     Image(systemName: "folder")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Theme.iconSize, height: Theme.iconSize)
                         .foregroundStyle(Theme.secondary)
                         .frame(width: 28, height: 28)
                         .contentShape(Rectangle())
@@ -187,6 +208,9 @@ struct InspectorPane: View {
                         Task { await store.setConnections(max(1, store.connectionsDraft - 1), for: task) }
                     } label: {
                         Image(systemName: "minus")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: Theme.iconSize, height: Theme.iconSize)
                             .frame(width: 28, height: 28)
                             .contentShape(Rectangle())
                     }
@@ -208,6 +232,9 @@ struct InspectorPane: View {
                         Task { await store.setConnections(min(32, store.connectionsDraft + 1), for: task) }
                     } label: {
                         Image(systemName: "plus")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: Theme.iconSize, height: Theme.iconSize)
                             .frame(width: 28, height: 28)
                             .contentShape(Rectangle())
                     }
@@ -287,8 +314,10 @@ struct InspectorPane: View {
 
     private func metaIcon(_ symbol: String) -> some View {
         Image(systemName: symbol)
+            .resizable()
+            .scaledToFit()
+            .frame(width: Theme.iconSize, height: Theme.iconSize)
             .foregroundStyle(Theme.secondary)
-            .frame(width: 16)
     }
 
     private static let addedFormatter: DateFormatter = {

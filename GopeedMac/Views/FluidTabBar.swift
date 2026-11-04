@@ -7,7 +7,7 @@ struct FluidTabBar: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(SidebarFilter.allCases) { filter in
+            ForEach(SidebarFilter.allCases, id: \.self) { filter in
                 let selected = selection == filter
                 Button {
                     withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
@@ -17,7 +17,7 @@ struct FluidTabBar: View {
                     Text(filter.title)
                         .font(.system(size: 15, weight: selected ? .semibold : .medium))
                         .foregroundStyle(selected ? Color.black : Theme.secondary)
-                        .padding(.horizontal, 24)
+                        .frame(width: Theme.tabItemWidth)
                         .frame(maxHeight: .infinity)
                         .background {
                             if selected {

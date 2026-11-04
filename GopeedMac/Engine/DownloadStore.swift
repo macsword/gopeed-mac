@@ -5,9 +5,16 @@ import SwiftUI
 @MainActor
 final class DownloadStore: ObservableObject {
     @Published var tasks: [DownloadTask] = []
-    @Published var filter: SidebarFilter = .all
+    @Published var filter: SidebarFilter = .all {
+        didSet { reconcileSelection() }
+    }
+    @Published var typeFilter: FileKind.Category = .all {
+        didSet { reconcileSelection() }
+    }
     @Published var selection: DownloadTask.ID?
-    @Published var search = ""
+    @Published var search = "" {
+        didSet { reconcileSelection() }
+    }
     @Published var engineError: String?
     @Published var isEngineReady = false
     @Published var showingAdd = false
@@ -35,7 +42,9 @@ final class DownloadStore: ObservableObject {
 
     var visibleTasks: [DownloadTask] {
         var list = tasks.filter { task in
-            filter.matches(task) && (search.isEmpty || task.displayName.localizedCaseInsensitiveContains(search))
+            filter.matches(task)
+                && typeFilter.matches(task)
+                && (search.isEmpty || task.displayName.localizedCaseInsensitiveContains(search))
         }
         list.sort { lhs, rhs in
             let ordered: Bool
@@ -97,9 +106,7 @@ final class DownloadStore: ObservableObject {
                 }
                 lastSnapshot = snapshot
             }
-            if selection == nil {
-                selection = visibleTasks.first?.id
-            }
+            reconcileSelection()
             if let selected = selectedTask {
                 if selected.status == .running {
                     recordSpeed(for: selected)
@@ -124,12 +131,36 @@ final class DownloadStore: ObservableObject {
     }
 
     func add(url: String, path: String?) async {
-        do {
-            let id = try await client.createTask(url: url, path: path, connections: defaultConnections)
-            await refresh()
-            selection = id
-        } catch {
-            engineError = error.localizedDescription
+        await addLinks([url], path: path)
+    }
+
+    func pasteFromClipboard() async {
+        let links = DownloadLinkParser.clipboardLinks()
+        guard !links.isEmpty else {
+            engineError = "Clipboard has no download link."
+            return
+        }
+        await addLinks(links, path: defaultDownloadDir.isEmpty ? nil : defaultDownloadDir)
+    }
+
+    func addLinks(_ raw: [String], path: String? = nil) async {
+        let links = raw.flatMap { DownloadLinkParser.links(from: $0) }
+        guard !links.isEmpty else {
+            engineError = "No download link found."
+            return
+        }
+        let destination = path ?? (defaultDownloadDir.isEmpty ? nil : defaultDownloadDir)
+        var lastID: String?
+        for link in links {
+            do {
+                lastID = try await client.createTask(url: link, path: destination, connections: defaultConnections)
+            } catch {
+                engineError = error.localizedDescription
+            }
+        }
+        await refresh()
+        if let lastID {
+            selection = lastID
         }
     }
 
@@ -229,6 +260,13 @@ final class DownloadStore: ObservableObject {
         } catch {
             engineError = error.localizedDescription
         }
+    }
+
+    private func reconcileSelection() {
+        if let selection, visibleTasks.contains(where: { $0.id == selection }) {
+            return
+        }
+        selection = visibleTasks.first?.id
     }
 
     private func startPolling() {

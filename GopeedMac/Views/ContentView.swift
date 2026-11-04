@@ -4,6 +4,7 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject private var store: DownloadStore
     @Namespace private var glassSpace
+    @State private var dropTargeted = false
 
     var body: some View {
         ZStack {
@@ -18,6 +19,7 @@ struct ContentView: View {
                             .frame(minWidth: 280)
                             .frame(maxWidth: store.inspectorCollapsed ? .infinity : 520)
                             .frame(maxHeight: .infinity)
+                            .clipShape(RoundedRectangle(cornerRadius: Theme.paneRadius, style: .continuous))
                             .paneGlass(opacity: store.panelOpacity)
                             .glassEffectUnion(id: "list", namespace: glassSpace)
 
@@ -28,7 +30,9 @@ struct ContentView: View {
                                 }
                             } label: {
                                 Image(systemName: "sidebar.right")
-                                    .font(.system(size: 14, weight: .semibold))
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: Theme.iconSize, height: Theme.iconSize)
                                     .foregroundStyle(Theme.secondary)
                                     .frame(width: 44, height: 120)
                                     .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
@@ -40,6 +44,7 @@ struct ContentView: View {
                         } else {
                             InspectorPane()
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .clipShape(RoundedRectangle(cornerRadius: Theme.paneRadius, style: .continuous))
                                 .paneGlass(opacity: store.panelOpacity)
                                 .glassEffectUnion(id: "inspector", namespace: glassSpace)
                                 .transition(.move(edge: .trailing).combined(with: .opacity))
@@ -72,19 +77,48 @@ struct ContentView: View {
         .onReceive(NotificationCenter.default.publisher(for: .gopeedNewDownload)) { _ in
             store.showingAdd = true
         }
+        .onReceive(NotificationCenter.default.publisher(for: .gdmDropTargeted)) { note in
+            dropTargeted = note.object as? Bool ?? false
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .gdmDroppedLinks)) { note in
+            guard let links = note.object as? [String] else { return }
+            Task { await store.addLinks(links) }
+        }
+        .overlay {
+            if dropTargeted {
+                RoundedRectangle(cornerRadius: Theme.paneRadius, style: .continuous)
+                    .fill(Color.black.opacity(0.28))
+                    .overlay {
+                        VStack(spacing: 10) {
+                            Image(systemName: "square.and.arrow.down")
+                                .font(.system(size: 28, weight: .semibold))
+                            Text("Drop links to download")
+                                .font(.system(size: 16, weight: .semibold))
+                        }
+                        .foregroundStyle(.white)
+                    }
+                    .padding(Theme.spaceLG)
+                    .allowsHitTesting(false)
+            }
+        }
     }
 
     private var toolbar: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 8) {
             Color.clear.frame(width: 68, height: 12)
 
-            FluidTabBar(selection: $store.filter)
-
-            Spacer(minLength: 12)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    FluidTabBar(selection: $store.filter)
+                    TypeTabBar(selection: $store.typeFilter)
+                }
+            }
 
             HStack(spacing: 10) {
                 Image(systemName: "magnifyingglass")
-                    .font(.system(size: 16, weight: .medium))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Theme.iconSize, height: Theme.iconSize)
                     .foregroundStyle(Theme.tertiary)
                 TextField("Search downloads...", text: $store.search)
                     .textFieldStyle(.plain)
@@ -93,7 +127,8 @@ struct ContentView: View {
                     .background(.clear)
             }
             .padding(.horizontal, 22)
-            .frame(minWidth: 140, maxWidth: 280)
+            .frame(minWidth: 160, idealWidth: 200, maxWidth: 240)
+            .layoutPriority(1)
             .sizedGlass(height: Theme.toolbarHeight, cornerRadius: Theme.toolbarHeight / 2)
 
             Menu {
@@ -107,7 +142,9 @@ struct ContentView: View {
                 }
             } label: {
                 Image(systemName: "line.3.horizontal.decrease")
-                    .font(.system(size: 16, weight: .semibold))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Theme.iconSize, height: Theme.iconSize)
                     .foregroundStyle(Theme.secondary)
                     .frame(width: Theme.toolbarHeight, height: Theme.toolbarHeight)
                     .contentShape(Circle())

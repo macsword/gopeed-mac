@@ -11,6 +11,8 @@
 		2076A505CBFE2CB6ADF79FDD /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4170DF74D17C1F6ED97C253 /* Theme.swift */; };
 		4601C4D4376B27B345C0F898 /* AddDownloadSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98290E0D7CC6F90940253818 /* AddDownloadSheet.swift */; };
 		4955F10BDBCD2B440EF8E47C /* FileKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840BFCE974BE16F9608FA69B /* FileKind.swift */; };
+		4C998D6677F829697CBB41F3 /* DownloadLinkParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E536AAAA1A824A1EC8009D41 /* DownloadLinkParser.swift */; };
+		4CB4B4F865A3FAA401D3C104 /* TypeTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BCC8725C7D6480CBD67B52 /* TypeTabBar.swift */; };
 		4D3CD493ABB6FF203EB4F6E7 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEDE2E8A9DDB96BE78A6D916 /* Models.swift */; };
 		4F08EC2B625F13AC3C38CDE2 /* GopeedEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C32AB4ABA1285F0868D347E /* GopeedEngine.swift */; };
 		5E8B6EF59E3C2909543FC6E9 /* WindowChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DBF995B812913986C1E195 /* WindowChrome.swift */; };
@@ -55,6 +57,7 @@
 		64B176DFAC60EA9194F01B65 /* CircularProgressRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularProgressRing.swift; sourceTree = "<group>"; };
 		7AB07614CA897F04687B7556 /* DownloadListPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadListPane.swift; sourceTree = "<group>"; };
 		7C32AB4ABA1285F0868D347E /* GopeedEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GopeedEngine.swift; sourceTree = "<group>"; };
+		82BCC8725C7D6480CBD67B52 /* TypeTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypeTabBar.swift; sourceTree = "<group>"; };
 		840BFCE974BE16F9608FA69B /* FileKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileKind.swift; sourceTree = "<group>"; };
 		881667E63039CC32691CAC8C /* DownloadCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadCard.swift; sourceTree = "<group>"; };
 		8C5F8140E02C56577876728F /* SpeedChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedChart.swift; sourceTree = "<group>"; };
@@ -68,6 +71,7 @@
 		D115D4A79F0B27C737B8FD8F /* GopeedMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GopeedMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAB928F5EC84C217961F629B /* DownloadStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadStore.swift; sourceTree = "<group>"; };
 		DEDE2E8A9DDB96BE78A6D916 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		E536AAAA1A824A1EC8009D41 /* DownloadLinkParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadLinkParser.swift; sourceTree = "<group>"; };
 		FD2F534EEF33E8DE4B191776 /* GopeedMac-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GopeedMac-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -114,6 +118,7 @@
 				51928F4B091E89E1A41D1AC4 /* InspectorPane.swift */,
 				A06DB930E69A3D5B872A337E /* SettingsView.swift */,
 				8C5F8140E02C56577876728F /* SpeedChart.swift */,
+				82BCC8725C7D6480CBD67B52 /* TypeTabBar.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -121,6 +126,7 @@
 		780EAD07603D98DD30B307C3 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				E536AAAA1A824A1EC8009D41 /* DownloadLinkParser.swift */,
 				DAB928F5EC84C217961F629B /* DownloadStore.swift */,
 				42AF6A3DEBEB0A52F96A38B2 /* GopeedClient.swift */,
 				7C32AB4ABA1285F0868D347E /* GopeedEngine.swift */,
@@ -262,6 +268,7 @@
 				AEE155368C08BD6B91CDF47C /* CircularProgressRing.swift in Sources */,
 				9D3E0684B11D80FA50981933 /* ContentView.swift in Sources */,
 				7940263AF6BDB12EF690E753 /* DownloadCard.swift in Sources */,
+				4C998D6677F829697CBB41F3 /* DownloadLinkParser.swift in Sources */,
 				677E54CC979A3F47996A81B1 /* DownloadListPane.swift in Sources */,
 				752D7748AC2B43417700EB75 /* DownloadStore.swift in Sources */,
 				4955F10BDBCD2B440EF8E47C /* FileKind.swift in Sources */,
@@ -274,6 +281,7 @@
 				74DA2EC14ED737CBA68040F6 /* SettingsView.swift in Sources */,
 				8912E1F173B279743F03FE3D /* SpeedChart.swift in Sources */,
 				2076A505CBFE2CB6ADF79FDD /* Theme.swift in Sources */,
+				4CB4B4F865A3FAA401D3C104 /* TypeTabBar.swift in Sources */,
 				5E8B6EF59E3C2909543FC6E9 /* WindowChrome.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
