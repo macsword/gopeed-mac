@@ -1,0 +1,39 @@
+{
+  "code": 0,
+  "msg": "",
+  "data": {
+    "snapshot": {
+      "connections": [
+        {
+          "downloaded": 1048576,
+          "total": 2097152,
+          "completed": true,
+          "failed": false,
+          "retryTimes": 0
+        },
+        {
+          "downloaded": 524288,
+          "total": 2097152,
+          "completed": false,
+          "failed": false,
+          "retryTimes": 0
+        },
+        {
+          "downloaded": 2359296,
+          "total": 2097152,
+          "completed": false,
+          "failed": false,
+          "retryTimes": 0
+        },
+        {
+          "downloaded": 4096,
+          "total": 2097152,
+          "completed": false,
+          "failed": true,
+          "retryTimes": 3
+        }
+      ]
+    },
+    "runtime": null
+  }
+}

@@ -26,6 +26,10 @@ final class DownloadStore: ObservableObject {
     @Published var sort: TaskSort = .added
     @Published var sortAscending = false
     @Published var inspectorCollapsed = false
+    /// True while the window is too narrow to show list and inspector side by side.
+    @Published var compactLayout = false
+    /// In compact layout, whether the inspector replaces the list.
+    @Published var compactInspectorShown = false
     @Published var engineConfig: [String: Any] = [:]
     @Published var defaultDownloadDir: String = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first?.path ?? ""
     @Published var defaultConnections: Int = 16
@@ -40,6 +44,8 @@ final class DownloadStore: ObservableObject {
     private var lastSnapshot: [TaskSnapshot] = []
     private var lastStatsAt = Date.distantPast
     private var lastStatsID: String?
+    private var completionTracker = CompletionTracker()
+    private let notifier = DownloadNotifier.shared
 
     var visibleTasks: [DownloadTask] {
         var list = tasks.filter { task in
@@ -80,6 +86,16 @@ final class DownloadStore: ObservableObject {
             try GopeedEngine.shared.start()
             isEngineReady = true
             engineError = nil
+            notifier.requestAuthorizationIfNeeded()
+            notifier.onOpenTask = { [weak self] id in
+                guard let self else { return }
+                self.filter = .all
+                self.typeFilter = .all
+                self.search = ""
+                self.selection = id
+                self.inspectorCollapsed = false
+                self.compactInspectorShown = true
+            }
             startPolling()
             Task { await loadConfig() }
         } catch {
@@ -98,6 +114,7 @@ final class DownloadStore: ObservableObject {
         guard isEngineReady else { return }
         do {
             let list = try await client.listTasks()
+            notifyFinished(in: list)
             let snapshot = list.map(TaskSnapshot.init)
             if snapshot != lastSnapshot {
                 var transaction = Transaction()
@@ -117,8 +134,14 @@ final class DownloadStore: ObservableObject {
                 if needsStats {
                     lastStatsAt = Date()
                     lastStatsID = selected.id
-                    if let stats = try? await client.stats(id: selected.id), statsByID[selected.id] != stats {
-                        statsByID[selected.id] = stats
+                    do {
+                        let stats = try await client.stats(id: selected.id)
+                        if statsByID[selected.id] != stats {
+                            statsByID[selected.id] = stats
+                        }
+                    } catch {
+                        // Keep the last known stats; a transient stats failure
+                        // should not raise the engine alert.
                     }
                     if connectionsDraft != selected.connections {
                         connectionsDraft = selected.connections
@@ -255,6 +278,14 @@ final class DownloadStore: ObservableObject {
         samples.append(SpeedSample(date: now, bytesPerSecond: task.speed))
         samples.removeAll { $0.date < cutoff }
         speedHistory[task.id] = samples
+    }
+
+    private func notifyFinished(in list: [DownloadTask]) {
+        let finished = completionTracker.newlyCompleted(list.map { (id: $0.id, isDone: $0.status == .done) })
+        for id in finished {
+            guard let task = list.first(where: { $0.id == id }) else { continue }
+            notifier.postFinished(taskID: task.id, name: task.displayName, filePath: task.fileURL?.path)
+        }
     }
 
     private func run(_ work: () async throws -> Void) async {

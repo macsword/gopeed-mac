@@ -49,8 +49,20 @@ final class GopeedClient {
         return try await post("/api/v1/tasks", body: body)
     }
 
-    func stats(id: String) async throws -> TaskStats {
-        try await get("/api/v1/tasks/\(id)/stats")
+    /// Returns `nil` when the engine has no stats for the task yet (`data: null`).
+    func stats(id: String) async throws -> TaskStats? {
+        let (data, status) = try await raw("/api/v1/tasks/\(id)/stats", method: "GET", body: nil, query: [:])
+        do {
+            let envelope = try decoder.decode(APIEnvelope<TaskStats>.self, from: data)
+            if envelope.code != 0 {
+                throw GopeedClientError.http(status, envelope.msg ?? "Engine error \(envelope.code)")
+            }
+            return envelope.data
+        } catch let error as GopeedClientError {
+            throw error
+        } catch {
+            throw GopeedClientError.decode(error.localizedDescription)
+        }
     }
 
     func patchConnections(id: String, connections: Int) async throws {

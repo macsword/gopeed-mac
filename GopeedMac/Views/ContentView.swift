@@ -13,45 +13,24 @@ struct ContentView: View {
 
             VStack(spacing: 0) {
                 toolbar
-                GlassEffectContainer(spacing: 0) {
-                    HStack(alignment: .top, spacing: Theme.spaceMD) {
-                        DownloadListPane()
-                            .frame(minWidth: 280)
-                            .frame(maxWidth: store.inspectorCollapsed ? .infinity : 520)
-                            .frame(maxHeight: .infinity)
-                            .clipShape(RoundedRectangle(cornerRadius: Theme.paneRadius, style: .continuous))
-                            .paneGlass(opacity: store.panelOpacity)
-                            .glassEffectUnion(id: "list", namespace: glassSpace)
-
-                        if store.inspectorCollapsed {
-                            Button {
-                                withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) {
-                                    store.inspectorCollapsed = false
-                                }
-                            } label: {
-                                Image(systemName: "sidebar.right")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: Theme.iconSize, height: Theme.iconSize)
-                                    .foregroundStyle(Theme.secondary)
-                                    .frame(width: 44, height: 120)
-                                    .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                GeometryReader { geo in
+                    let compact = geo.size.width < Theme.splitLayoutMinWidth
+                    GlassEffectContainer(spacing: 0) {
+                        HStack(alignment: .top, spacing: Theme.spaceMD) {
+                            if compact {
+                                compactPanes
+                            } else {
+                                splitPanes
                             }
-                            .buttonStyle(FullAreaButtonStyle())
-                            .liquidGlass(cornerRadius: 18)
-                            .glassEffectUnion(id: "inspectorToggle", namespace: glassSpace)
-                            .help("Show Inspector")
-                        } else {
-                            InspectorPane()
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .clipShape(RoundedRectangle(cornerRadius: Theme.paneRadius, style: .continuous))
-                                .paneGlass(opacity: store.panelOpacity)
-                                .glassEffectUnion(id: "inspector", namespace: glassSpace)
-                                .transition(.move(edge: .trailing).combined(with: .opacity))
                         }
+                        .padding(.horizontal, Theme.spaceMD)
+                        .padding(.bottom, Theme.spaceMD)
                     }
-                    .padding(.horizontal, Theme.spaceMD)
-                    .padding(.bottom, Theme.spaceMD)
+                    .onAppear { store.compactLayout = compact }
+                    .onChange(of: compact) { _, value in
+                        store.compactLayout = value
+                        if !value { store.compactInspectorShown = false }
+                    }
                 }
             }
         }
@@ -100,6 +79,67 @@ struct ContentView: View {
                     .padding(Theme.spaceLG)
                     .allowsHitTesting(false)
             }
+        }
+    }
+
+    private var listPane: some View {
+        DownloadListPane()
+            .frame(maxHeight: .infinity)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.paneRadius, style: .continuous))
+            .paneGlass(opacity: store.panelOpacity)
+            .glassEffectUnion(id: "list", namespace: glassSpace)
+    }
+
+    private var inspectorPane: some View {
+        InspectorPane()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .clipShape(RoundedRectangle(cornerRadius: Theme.paneRadius, style: .continuous))
+            .paneGlass(opacity: store.panelOpacity)
+            .glassEffectUnion(id: "inspector", namespace: glassSpace)
+            .transition(.move(edge: .trailing).combined(with: .opacity))
+    }
+
+    private func showInspectorButton(_ action: @escaping () -> Void) -> some View {
+        Button {
+            withAnimation(.spring(response: 0.42, dampingFraction: 0.86), action)
+        } label: {
+            Image(systemName: "sidebar.right")
+                .resizable()
+                .scaledToFit()
+                .frame(width: Theme.iconSize, height: Theme.iconSize)
+                .foregroundStyle(Theme.secondary)
+                .frame(width: 44, height: 120)
+                .contentShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        }
+        .buttonStyle(FullAreaButtonStyle())
+        .liquidGlass(cornerRadius: 18)
+        .glassEffectUnion(id: "inspectorToggle", namespace: glassSpace)
+        .help("Show Inspector")
+    }
+
+    /// Wide windows: list and inspector side by side.
+    @ViewBuilder
+    private var splitPanes: some View {
+        listPane
+            .frame(minWidth: Theme.listPaneMinWidth)
+            .frame(maxWidth: store.inspectorCollapsed ? .infinity : 520)
+        if store.inspectorCollapsed {
+            showInspectorButton { store.inspectorCollapsed = false }
+        } else {
+            inspectorPane
+                .frame(minWidth: Theme.inspectorMinWidth)
+        }
+    }
+
+    /// Narrow windows: one pane at a time instead of squeezing both.
+    @ViewBuilder
+    private var compactPanes: some View {
+        if store.compactInspectorShown {
+            inspectorPane
+        } else {
+            listPane
+                .frame(maxWidth: .infinity)
+            showInspectorButton { store.compactInspectorShown = true }
         }
     }
 
