@@ -57,11 +57,15 @@ struct InspectorPane: View {
         HStack {
             Button {
                 withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) {
-                    store.inspectorCollapsed = true
+                    if store.compactLayout {
+                        store.compactInspectorShown = false
+                    } else {
+                        store.inspectorCollapsed = true
+                    }
                 }
             } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: "chevron.right")
+                    Image(systemName: store.compactLayout ? "chevron.left" : "chevron.right")
                         .font(.system(size: 11, weight: .semibold))
                     Text("Inspector")
                         .font(.system(size: 13, weight: .semibold))
@@ -72,7 +76,7 @@ struct InspectorPane: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(FullAreaButtonStyle())
-            .help("Hide Inspector")
+            .help(store.compactLayout ? "Back to Downloads" : "Hide Inspector")
             Spacer()
         }
     }
@@ -96,6 +100,9 @@ struct InspectorPane: View {
                     Text(task.displayName)
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(.white)
+                        .lineLimit(2)
+                        .truncationMode(.middle)
+                        .layoutPriority(1)
                     Button {
                         store.openURL(task)
                     } label: {
@@ -113,6 +120,7 @@ struct InspectorPane: View {
                     Circle().fill(statusColor(task)).frame(width: 7, height: 7)
                     Text("\(task.status.title)  •  \(task.percentText)")
                         .font(.system(size: 12))
+                        .lineLimit(1)
                         .foregroundStyle(Theme.secondary)
                 }
             }
@@ -133,16 +141,7 @@ struct InspectorPane: View {
     }
 
     private func chunks(_ task: DownloadTask) -> some View {
-        let connections = store.statsByID[task.id]?.connections ?? []
-        let total = max(connections.count, task.connections, 1)
-        let completed: Int = {
-            if !connections.isEmpty {
-                return connections.filter { $0.completed == true }.count
-            }
-            return Int((task.fraction * Double(256)).rounded())
-        }()
-        let visualTotal = connections.isEmpty ? 256 : total
-        return ChunkGrid(completed: connections.isEmpty ? completed : completed, total: visualTotal)
+        ChunkGrid(stats: store.statsByID[task.id], taskIsDone: task.status == .done)
             .frame(maxWidth: .infinity)
     }
 
@@ -158,6 +157,8 @@ struct InspectorPane: View {
                     .frame(width: 92, alignment: .leading)
                 Text(task.fileURL?.path ?? task.meta?.opts?.path ?? "—")
                     .foregroundStyle(.white)
+                    .lineLimit(3)
+                    .truncationMode(.middle)
                     .textSelection(.enabled)
                 Spacer()
                 Button { store.reveal(task) } label: {
@@ -185,70 +186,85 @@ struct InspectorPane: View {
                 metric("Current Speed", ByteFormat.speed(task.speed))
                 metric("Average Speed", ByteFormat.speed(task.averageSpeed))
             }
-            HStack(spacing: Theme.spaceMD) {
-                HStack {
-                    Text("Priority")
-                        .foregroundStyle(Theme.secondary)
-                    Spacer()
-                    Text("High")
-                        .padding(.horizontal, Theme.spaceMD)
-                        .padding(.vertical, Theme.spaceXS)
-                        .background(Color.white.opacity(0.08), in: Capsule())
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 9))
-                        .foregroundStyle(Theme.tertiary)
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: Theme.spaceMD) {
+                    priorityControl
+                    connectionsControl(task)
                 }
-                .padding(Theme.spaceMD)
-                .liquidGlass(cornerRadius: 16)
-
-                HStack(spacing: Theme.spaceSM) {
-                    Text("Connections")
-                        .foregroundStyle(Theme.secondary)
-                    Button {
-                        Task { await store.setConnections(max(1, store.connectionsDraft - 1), for: task) }
-                    } label: {
-                        Image(systemName: "minus")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: Theme.iconSize, height: Theme.iconSize)
-                            .frame(width: 28, height: 28)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(FullAreaButtonStyle())
-                    Slider(
-                        value: Binding(
-                            get: { Double(store.connectionsDraft) },
-                            set: { store.connectionsDraft = Int($0) }
-                        ),
-                        in: 1...32,
-                        step: 1
-                    ) { editing in
-                        if !editing {
-                            Task { await store.setConnections(store.connectionsDraft, for: task) }
-                        }
-                    }
-                    .tint(Theme.accent)
-                    Button {
-                        Task { await store.setConnections(min(32, store.connectionsDraft + 1), for: task) }
-                    } label: {
-                        Image(systemName: "plus")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: Theme.iconSize, height: Theme.iconSize)
-                            .frame(width: 28, height: 28)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(FullAreaButtonStyle())
-                    Text("\(store.connectionsDraft) / 32")
-                        .monospacedDigit()
-                        .foregroundStyle(.white)
-                        .frame(width: 52, alignment: .trailing)
+                VStack(spacing: Theme.spaceMD) {
+                    priorityControl
+                    connectionsControl(task)
                 }
-                .padding(Theme.spaceMD)
-                .liquidGlass(cornerRadius: 16)
             }
             .font(.system(size: 12))
         }
+    }
+
+    private var priorityControl: some View {
+        HStack {
+            Text("Priority")
+                .foregroundStyle(Theme.secondary)
+            Spacer()
+            Text("High")
+                .padding(.horizontal, Theme.spaceMD)
+                .padding(.vertical, Theme.spaceXS)
+                .background(Color.white.opacity(0.08), in: Capsule())
+            Image(systemName: "chevron.up.chevron.down")
+                .font(.system(size: 9))
+                .foregroundStyle(Theme.tertiary)
+        }
+        .padding(Theme.spaceMD)
+        .liquidGlass(cornerRadius: 16)
+    }
+
+    private func connectionsControl(_ task: DownloadTask) -> some View {
+        HStack(spacing: Theme.spaceSM) {
+            Text("Connections")
+                .foregroundStyle(Theme.secondary)
+                .fixedSize()
+            Button {
+                Task { await store.setConnections(max(1, store.connectionsDraft - 1), for: task) }
+            } label: {
+                Image(systemName: "minus")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Theme.iconSize, height: Theme.iconSize)
+                    .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(FullAreaButtonStyle())
+            Slider(
+                value: Binding(
+                    get: { Double(store.connectionsDraft) },
+                    set: { store.connectionsDraft = Int($0) }
+                ),
+                in: 1...32,
+                step: 1
+            ) { editing in
+                if !editing {
+                    Task { await store.setConnections(store.connectionsDraft, for: task) }
+                }
+            }
+            .tint(Theme.accent)
+            .frame(minWidth: 120)
+            Button {
+                Task { await store.setConnections(min(32, store.connectionsDraft + 1), for: task) }
+            } label: {
+                Image(systemName: "plus")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Theme.iconSize, height: Theme.iconSize)
+                    .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(FullAreaButtonStyle())
+            Text("\(store.connectionsDraft) / 32")
+                .monospacedDigit()
+                .foregroundStyle(.white)
+                .frame(width: 52, alignment: .trailing)
+        }
+        .padding(Theme.spaceMD)
+        .liquidGlass(cornerRadius: 16)
     }
 
     private func controls(_ task: DownloadTask) -> some View {

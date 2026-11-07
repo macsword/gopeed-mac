@@ -14,6 +14,8 @@
 		4C998D6677F829697CBB41F3 /* DownloadLinkParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E536AAAA1A824A1EC8009D41 /* DownloadLinkParser.swift */; };
 		4CB4B4F865A3FAA401D3C104 /* TypeTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BCC8725C7D6480CBD67B52 /* TypeTabBar.swift */; };
 		4D3CD493ABB6FF203EB4F6E7 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEDE2E8A9DDB96BE78A6D916 /* Models.swift */; };
+		0AFEF0001C4729D07BBB1A5D /* DownloadNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44966CE47231EA552CA99C36 /* DownloadNotifier.swift */; };
+		876BDFFEC558485D347AF186 /* TaskStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 451755A2E75C6AC9C1E19B85 /* TaskStats.swift */; };
 		4F08EC2B625F13AC3C38CDE2 /* GopeedEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C32AB4ABA1285F0868D347E /* GopeedEngine.swift */; };
 		5E8B6EF59E3C2909543FC6E9 /* WindowChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DBF995B812913986C1E195 /* WindowChrome.swift */; };
 		60094F8C9C35CA0EA270F523 /* GopeedClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42AF6A3DEBEB0A52F96A38B2 /* GopeedClient.swift */; };
@@ -71,6 +73,8 @@
 		D115D4A79F0B27C737B8FD8F /* GopeedMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GopeedMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAB928F5EC84C217961F629B /* DownloadStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadStore.swift; sourceTree = "<group>"; };
 		DEDE2E8A9DDB96BE78A6D916 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		44966CE47231EA552CA99C36 /* DownloadNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadNotifier.swift; sourceTree = "<group>"; };
+		451755A2E75C6AC9C1E19B85 /* TaskStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStats.swift; sourceTree = "<group>"; };
 		E536AAAA1A824A1EC8009D41 /* DownloadLinkParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadLinkParser.swift; sourceTree = "<group>"; };
 		FD2F534EEF33E8DE4B191776 /* GopeedMac-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GopeedMac-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -132,6 +136,8 @@
 				7C32AB4ABA1285F0868D347E /* GopeedEngine.swift */,
 				FD2F534EEF33E8DE4B191776 /* GopeedMac-Bridging-Header.h */,
 				DEDE2E8A9DDB96BE78A6D916 /* Models.swift */,
+				44966CE47231EA552CA99C36 /* DownloadNotifier.swift */,
+				451755A2E75C6AC9C1E19B85 /* TaskStats.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -278,6 +284,8 @@
 				D81A932EC09A1D94390D1AB3 /* GopeedMacApp.swift in Sources */,
 				653A4929A14DF10A0E82D167 /* InspectorPane.swift in Sources */,
 				4D3CD493ABB6FF203EB4F6E7 /* Models.swift in Sources */,
+				0AFEF0001C4729D07BBB1A5D /* DownloadNotifier.swift in Sources */,
+				876BDFFEC558485D347AF186 /* TaskStats.swift in Sources */,
 				74DA2EC14ED737CBA68040F6 /* SettingsView.swift in Sources */,
 				8912E1F173B279743F03FE3D /* SpeedChart.swift in Sources */,
 				2076A505CBFE2CB6ADF79FDD /* Theme.swift in Sources */,

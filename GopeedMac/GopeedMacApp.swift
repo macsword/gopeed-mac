@@ -9,7 +9,7 @@ struct GopeedMacApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(store)
-                .frame(minWidth: 720, minHeight: 520)
+                .frame(minWidth: 560, minHeight: 480)
                 .onAppear { store.start() }
                 .onReceive(NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)) { _ in
                     store.stop()

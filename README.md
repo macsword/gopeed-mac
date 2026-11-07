@@ -37,6 +37,10 @@ Or open `GopeedMac.xcodeproj` in Xcode after `xcodegen generate`.
 
 `engine/gopeed` is the upstream clone (gitignored). `engine/host` is the small CGO wrapper that starts Gopeed’s REST server.
 
+### Logic tests
+
+`Tests/run-logic-tests.sh` compiles the Foundation-only engine models (`GopeedMac/Engine/TaskStats.swift`) with a small runner and checks stats decoding against JSON fixtures in `Tests/Fixtures` plus the download-finished notification logic. It needs only `swiftc` (Xcode or a swift.org toolchain).
+
 ## License
 
 [GPL-3.0](LICENSE), same as Gopeed, because this app links `libgopeed`.

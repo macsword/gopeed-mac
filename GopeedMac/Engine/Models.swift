@@ -128,17 +128,6 @@ struct TaskExtra: Decodable, Hashable {
     let connections: Int?
 }
 
-struct TaskStats: Decodable, Hashable {
-    let connections: [StatConnection]?
-}
-
-struct StatConnection: Decodable, Hashable {
-    let downloaded: Int64?
-    let total: Int64?
-    let completed: Bool?
-    let failed: Bool?
-}
-
 struct CreateTaskBody: Encodable {
     struct Request: Encodable {
         let url: String
