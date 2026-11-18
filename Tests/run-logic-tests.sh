@@ -4,5 +4,8 @@
 set -eu
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 OUT="${TMPDIR:-/tmp}/gdm-logic-tests"
-swiftc -o "$OUT" "$ROOT/GopeedMac/Engine/TaskStats.swift" "$ROOT/Tests/LogicTests/main.swift"
+swiftc -o "$OUT" \
+  "$ROOT/GopeedMac/Engine/TaskStats.swift" \
+  "$ROOT/GopeedMac/Engine/TaskSelection.swift" \
+  "$ROOT/Tests/LogicTests/main.swift"
 "$OUT" "$ROOT/Tests/Fixtures"

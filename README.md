@@ -33,13 +33,15 @@ xcodegen generate
 xcodebuild -scheme GopeedMac -destination 'platform=macOS' -configuration Release ONLY_ACTIVE_ARCH=YES ARCHS=arm64 build
 ```
 
+Every successful app build copies `GDM.app` into `/Applications` (the Xcode product stays in DerivedData so Run still works).
+
 Or open `GopeedMac.xcodeproj` in Xcode after `xcodegen generate`.
 
 `engine/gopeed` is the upstream clone (gitignored). `engine/host` is the small CGO wrapper that starts Gopeed’s REST server.
 
 ### Logic tests
 
-`Tests/run-logic-tests.sh` compiles the Foundation-only engine models (`GopeedMac/Engine/TaskStats.swift`) with a small runner and checks stats decoding against JSON fixtures in `Tests/Fixtures` plus the download-finished notification logic. It needs only `swiftc` (Xcode or a swift.org toolchain).
+`Tests/run-logic-tests.sh` compiles the Foundation-only engine models (`TaskStats.swift`, `TaskSelection.swift`) with a small runner and checks stats decoding, download-finished notification logic, and multi-select behavior. It needs only `swiftc` (Xcode or a swift.org toolchain).
 
 ## License
 

@@ -5,41 +5,10 @@ struct InspectorPane: View {
 
     var body: some View {
         Group {
-            if let task = store.selectedTask {
-                VStack(spacing: 0) {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: Theme.spaceLG) {
-                            header(task)
-                            identity(task)
-                            status(task)
-                            chunks(task)
-                            meta(task)
-                            SpeedChart(samples: store.speedHistory[task.id] ?? [], current: task.speed)
-                            metrics(task)
-                        }
-                        .padding(.horizontal, Theme.spaceXL)
-                        .padding(.top, Theme.spaceXL)
-                        .padding(.bottom, Theme.spaceLG)
-                    }
-                    .scrollIndicators(.never)
-                    .scrollEdgeEffectStyle(.soft, for: .bottom)
-                    .mask(alignment: .bottom) {
-                        VStack(spacing: 0) {
-                            Color.white
-                            LinearGradient(
-                                colors: [.white, .white.opacity(0)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .frame(height: 44)
-                        }
-                    }
-
-                    controls(task)
-                        .padding(.horizontal, Theme.spaceXL)
-                        .padding(.bottom, Theme.spaceXL)
-                        .padding(.top, Theme.spaceSM)
-                }
+            if store.selectionState.isMultiple {
+                multiSelectionContent
+            } else if let task = store.selectedTask {
+                singleSelectionContent(task)
             } else {
                 VStack(spacing: Theme.spaceMD) {
                     Image(systemName: "sidebar.right")
@@ -53,7 +22,109 @@ struct InspectorPane: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func header(_ task: DownloadTask) -> some View {
+    private func singleSelectionContent(_ task: DownloadTask) -> some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: Theme.spaceLG) {
+                    header
+                    identity(task)
+                    status(task)
+                    chunks(task)
+                    meta(task)
+                    SpeedChart(samples: store.speedHistory[task.id] ?? [], current: task.speed)
+                    metrics(task)
+                }
+                .padding(.horizontal, Theme.spaceXL)
+                .padding(.top, Theme.spaceXL)
+                .padding(.bottom, Theme.spaceLG)
+            }
+            .scrollIndicators(.never)
+            .scrollEdgeEffectStyle(.soft, for: .bottom)
+            .mask(alignment: .bottom) {
+                inspectorFade
+            }
+
+            controls(task)
+                .padding(.horizontal, Theme.spaceXL)
+                .padding(.bottom, Theme.spaceXL)
+                .padding(.top, Theme.spaceSM)
+        }
+    }
+
+    private var multiSelectionContent: some View {
+        let tasks = store.selectedTasks
+        let downloaded = tasks.reduce(Int64(0)) { $0 + $1.downloaded }
+        let total = tasks.reduce(Int64(0)) { $0 + $1.totalSize }
+        let fraction = total > 0 ? min(1, Double(downloaded) / Double(total)) : 0
+        return VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: Theme.spaceLG) {
+                    header
+                    HStack(spacing: Theme.spaceMD) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(Color.white.opacity(0.12))
+                            Image(systemName: "checkmark.circle")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: Theme.iconSize, height: Theme.iconSize)
+                                .foregroundStyle(.white)
+                        }
+                        .frame(width: 36, height: 36)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("\(tasks.count) downloads selected")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(.white)
+                            Text(multiStatusLine(tasks))
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.secondary)
+                        }
+                        Spacer()
+                    }
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(Color.white.opacity(0.08))
+                            Capsule()
+                                .fill(Theme.accent)
+                                .frame(width: geo.size.width * fraction)
+                        }
+                    }
+                    .frame(height: 8)
+                    HStack(spacing: Theme.spaceMD) {
+                        metric("Downloaded", ByteFormat.string(downloaded))
+                        metric("Total Size", total > 0 ? ByteFormat.string(total) : "—")
+                    }
+                }
+                .padding(.horizontal, Theme.spaceXL)
+                .padding(.top, Theme.spaceXL)
+                .padding(.bottom, Theme.spaceLG)
+            }
+            .scrollIndicators(.never)
+            .scrollEdgeEffectStyle(.soft, for: .bottom)
+            .mask(alignment: .bottom) {
+                inspectorFade
+            }
+
+            multiControls
+                .padding(.horizontal, Theme.spaceXL)
+                .padding(.bottom, Theme.spaceXL)
+                .padding(.top, Theme.spaceSM)
+        }
+    }
+
+    private var inspectorFade: some View {
+        VStack(spacing: 0) {
+            Color.white
+            LinearGradient(
+                colors: [.white, .white.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 44)
+        }
+    }
+
+    private var header: some View {
         HStack {
             Button {
                 withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) {
@@ -267,9 +338,49 @@ struct InspectorPane: View {
         .liquidGlass(cornerRadius: 16)
     }
 
+    private var multiControls: some View {
+        VStack(spacing: 12) {
+            EqualWidthHStack(spacing: 12) {
+                inspectorAction("Pause", symbol: "pause.fill", kind: .prominent) {
+                    Task { await store.pauseSelected() }
+                }
+                .disabled(!store.canPauseSelected)
+                inspectorAction("Resume", symbol: "play.fill", kind: .regular) {
+                    Task { await store.resumeSelected() }
+                }
+                .disabled(!store.canResumeSelected)
+            }
+            EqualWidthHStack(spacing: 12) {
+                inspectorAction("Reveal", symbol: "folder", kind: .regular) {
+                    store.revealSelected()
+                }
+                inspectorAction("Remove", symbol: "minus", kind: .regular) {
+                    Task { await store.deleteSelected(removeFiles: false) }
+                }
+                inspectorAction("Delete", symbol: "trash", kind: .danger) {
+                    Task { await store.deleteSelected(removeFiles: true) }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func multiStatusLine(_ tasks: [DownloadTask]) -> String {
+        var parts: [String] = []
+        let running = tasks.filter { $0.status == .running || $0.status == .wait }.count
+        let paused = tasks.filter { $0.status == .pause }.count
+        let done = tasks.filter { $0.status == .done }.count
+        let failed = tasks.filter { $0.status == .error }.count
+        if running > 0 { parts.append("\(running) downloading") }
+        if paused > 0 { parts.append("\(paused) paused") }
+        if done > 0 { parts.append("\(done) completed") }
+        if failed > 0 { parts.append("\(failed) failed") }
+        return parts.isEmpty ? "\(tasks.count) selected" : parts.joined(separator: "  ·  ")
+    }
+
     private func controls(_ task: DownloadTask) -> some View {
         EqualWidthHStack(spacing: 12) {
-            if task.status == .running || task.status == .wait || task.status == .ready {
+            if task.canPause {
                 inspectorAction("Pause", symbol: "pause.fill", kind: .prominent) {
                     Task { await store.pause(task) }
                 }

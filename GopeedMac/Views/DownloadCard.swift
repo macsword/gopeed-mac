@@ -267,13 +267,9 @@ struct DownloadCard: View, Equatable {
         .help(canPause ? "Pause" : (canResume ? "Resume" : task.percentText))
     }
 
-    private var canPause: Bool {
-        task.status == .running || task.status == .wait || task.status == .ready
-    }
+    private var canPause: Bool { task.canPause }
 
-    private var canResume: Bool {
-        task.status == .pause || task.status == .error
-    }
+    private var canResume: Bool { task.canResume }
 
     private var sizeLine: String {
         if task.totalSize > 0 {

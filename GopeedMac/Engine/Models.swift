@@ -92,6 +92,14 @@ struct DownloadTask: Identifiable, Decodable, Hashable {
     var connections: Int {
         meta?.opts?.extra?.connections ?? 16
     }
+
+    var canPause: Bool {
+        status == .running || status == .wait || status == .ready
+    }
+
+    var canResume: Bool {
+        status == .pause || status == .error
+    }
 }
 
 struct TaskProgress: Decodable, Hashable {

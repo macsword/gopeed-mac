@@ -37,6 +37,11 @@ struct ContentView: View {
         .preferredColorScheme(.dark)
         .background(.clear)
         .containerBackground(.clear, for: .window)
+        .onExitCommand {
+            if store.selectionState.isMultiple {
+                store.collapseSelection()
+            }
+        }
         .sheet(isPresented: $store.showingAdd) {
             AddDownloadSheet()
                 .environmentObject(store)

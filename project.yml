@@ -73,6 +73,11 @@ schemes:
     build:
       targets:
         GopeedMac: all
+      postActions:
+        - name: Install to Applications
+          settingsTarget: GopeedMac
+          script: |
+            "${PROJECT_DIR}/Scripts/install-app.sh"
     run:
       config: Debug
       executable: GopeedMac
