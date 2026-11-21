@@ -7,3 +7,4 @@ GopeedMac/Frameworks/libgopeed.dylib
 GopeedMac/Frameworks/libgopeed.h
 engine/host/gopeed-mac
 engine/gopeed/
+dist/

@@ -8,15 +8,31 @@ struct DownloadListPane: View {
             let useGrid = geo.size.width >= Theme.listGridBreakpoint
             let columns = gridColumns(for: geo.size.width, count: store.visibleTasks.count)
             VStack(spacing: 0) {
-                HStack {
+                HStack(spacing: Theme.spaceSM) {
                     Label("Downloads", systemImage: "arrow.down")
                         .font(.system(size: 17, weight: .semibold))
                         .foregroundStyle(.white)
                         .symbolRenderingMode(.hierarchical)
                     Spacer()
-                    Text("\(store.visibleTasks.count) Total")
-                        .font(.system(size: 13))
+                    if store.selectionState.isMultiple {
+                        Text("\(store.selectionState.count) selected")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(.white)
+                    } else {
+                        Text("\(store.visibleTasks.count) Total")
+                            .font(.system(size: 13))
+                            .foregroundStyle(Theme.secondary)
+                    }
+                    if store.visibleTasks.count > 1 {
+                        Button(store.allVisibleSelected ? "Deselect" : "Select All") {
+                            store.toggleSelectAllVisible()
+                        }
+                        .buttonStyle(.plain)
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(Theme.secondary)
+                        .help(store.allVisibleSelected ? "Keep only the current download selected" : "Select every visible download")
+                        .focusable(false)
+                    }
                 }
                 .padding(.horizontal, Theme.spaceLG)
                 .padding(.top, Theme.spaceMD)
@@ -40,6 +56,12 @@ struct DownloadListPane: View {
                 }
                 .scrollIndicators(.never)
                 .scrollClipFade()
+
+                if store.selectionState.isMultiple {
+                    selectionActions
+                        .padding(.horizontal, Theme.spaceLG)
+                        .padding(.top, Theme.spaceSM)
+                }
 
                 HStack(spacing: 12) {
                     Button {
@@ -78,10 +100,52 @@ struct DownloadListPane: View {
             }
         }
         .onAppear {
-            if store.selection == nil {
-                store.selection = store.visibleTasks.first?.id
+            if store.selection == nil, let first = store.visibleTasks.first {
+                store.selectOnly(first.id)
             }
         }
+    }
+
+    private var selectionActions: some View {
+        HStack(spacing: 8) {
+            selectionAction("pause.fill", help: "Pause selected", enabled: store.canPauseSelected) {
+                Task { await store.pauseSelected() }
+            }
+            selectionAction("play.fill", help: "Resume selected", enabled: store.canResumeSelected) {
+                Task { await store.resumeSelected() }
+            }
+            selectionAction("folder", help: "Reveal selected in Finder", enabled: true) {
+                store.revealSelected()
+            }
+            selectionAction("minus", help: "Remove selected from list", enabled: true) {
+                Task { await store.deleteSelected(removeFiles: false) }
+            }
+            selectionAction("trash", help: "Delete selected files", enabled: true, danger: true) {
+                Task { await store.deleteSelected(removeFiles: true) }
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func selectionAction(_ symbol: String, help: String, enabled: Bool, danger: Bool = false, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .resizable()
+                .scaledToFit()
+                .frame(width: Theme.iconSize, height: Theme.iconSize)
+                .foregroundStyle(.white)
+                .frame(width: 36, height: 36)
+                .background(danger ? Theme.danger.opacity(0.88) : Theme.toolbarFill, in: Circle())
+                .overlay {
+                    Circle().strokeBorder(Color.white.opacity(0.16), lineWidth: 1)
+                }
+                .contentShape(Circle())
+                .opacity(enabled ? 1 : 0.38)
+        }
+        .buttonStyle(FullAreaButtonStyle())
+        .disabled(!enabled)
+        .help(help)
+        .focusable(false)
     }
 
     private func gridColumns(for width: CGFloat, count: Int) -> [GridItem] {
@@ -98,11 +162,11 @@ struct DownloadListPane: View {
         ForEach(store.visibleTasks) { task in
             DownloadCard(
                 task: task,
-                selected: store.selection == task.id,
+                selected: store.selectionState.contains(task.id),
                 layout: layout,
                 actionsOpen: store.openCardActions == task.id,
                 onSelect: {
-                    store.selection = task.id
+                    store.handleCardSelect(task.id)
                 },
                 onSetActionsOpen: { open in
                     if open {
@@ -119,6 +183,43 @@ struct DownloadListPane: View {
             )
             .equatable()
             .focusable(false)
+            .contextMenu { cardContextMenu(task) }
+        }
+    }
+
+    @ViewBuilder
+    private func cardContextMenu(_ task: DownloadTask) -> some View {
+        let targets = store.actionTargets(for: task)
+        let plural = targets.count > 1
+        if targets.contains(where: \.canPause) {
+            Button(plural ? "Pause Selected" : "Pause") {
+                Task { await store.pause(tasks: targets) }
+            }
+        }
+        if targets.contains(where: \.canResume) {
+            Button(plural ? "Resume Selected" : "Resume") {
+                Task { await store.resume(tasks: targets) }
+            }
+        }
+        Button(plural ? "Reveal Selected in Finder" : "Reveal in Finder") {
+            store.reveal(tasks: targets)
+        }
+        Divider()
+        Button(plural ? "Remove Selected from List" : "Remove from List") {
+            Task { await store.delete(tasks: targets, removeFiles: false) }
+        }
+        Button(plural ? "Delete Selected Files" : "Delete File", role: .destructive) {
+            Task { await store.delete(tasks: targets, removeFiles: true) }
+        }
+        Divider()
+        Button("Select All") {
+            store.selectAllVisible()
+        }
+        .disabled(store.visibleTasks.isEmpty)
+        if store.selectionState.isMultiple {
+            Button("Deselect") {
+                store.collapseSelection()
+            }
         }
     }
 }

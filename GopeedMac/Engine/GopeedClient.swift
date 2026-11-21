@@ -49,8 +49,20 @@ final class GopeedClient {
         return try await post("/api/v1/tasks", body: body)
     }
 
-    func stats(id: String) async throws -> TaskStats {
-        try await get("/api/v1/tasks/\(id)/stats")
+    /// Returns `nil` when the engine has no stats for the task yet (`data: null`).
+    func stats(id: String) async throws -> TaskStats? {
+        let (data, status) = try await raw("/api/v1/tasks/\(id)/stats", method: "GET", body: nil, query: [:])
+        do {
+            let envelope = try decoder.decode(APIEnvelope<TaskStats>.self, from: data)
+            if envelope.code != 0 {
+                throw GopeedClientError.http(status, envelope.msg ?? "Engine error \(envelope.code)")
+            }
+            return envelope.data
+        } catch let error as GopeedClientError {
+            throw error
+        } catch {
+            throw GopeedClientError.decode(error.localizedDescription)
+        }
     }
 
     func patchConnections(id: String, connections: Int) async throws {
@@ -71,6 +83,35 @@ final class GopeedClient {
 
     func delete(id: String, removeFiles: Bool) async throws {
         try await deleteVoid("/api/v1/tasks/\(id)", query: ["force": removeFiles ? "true" : "false"])
+    }
+
+    func pause(ids: [String]) async throws {
+        guard !ids.isEmpty else { return }
+        if ids.count == 1, let id = ids.first {
+            try await pause(id: id)
+            return
+        }
+        try await sendVoid("/api/v1/tasks/pause", method: "PUT", queryItems: idQuery(ids))
+    }
+
+    func resume(ids: [String]) async throws {
+        guard !ids.isEmpty else { return }
+        if ids.count == 1, let id = ids.first {
+            try await resume(id: id)
+            return
+        }
+        try await sendVoid("/api/v1/tasks/continue", method: "PUT", queryItems: idQuery(ids))
+    }
+
+    func delete(ids: [String], removeFiles: Bool) async throws {
+        guard !ids.isEmpty else { return }
+        if ids.count == 1, let id = ids.first {
+            try await delete(id: id, removeFiles: removeFiles)
+            return
+        }
+        var items = idQuery(ids)
+        items.append(URLQueryItem(name: "force", value: removeFiles ? "true" : "false"))
+        try await sendVoid("/api/v1/tasks", method: "DELETE", queryItems: items)
     }
 
     func getConfig() async throws -> [String: Any] {
@@ -108,7 +149,11 @@ final class GopeedClient {
     }
 
     private func sendVoid(_ path: String, method: String, query: [String: String] = [:], body: Data? = nil) async throws {
-        let (data, status) = try await raw(path, method: method, body: body, query: query)
+        try await sendVoid(path, method: method, queryItems: dictQuery(query), body: body)
+    }
+
+    private func sendVoid(_ path: String, method: String, queryItems: [URLQueryItem], body: Data? = nil) async throws {
+        let (data, status) = try await raw(path, method: method, body: body, queryItems: queryItems)
         do {
             let envelope = try decoder.decode(APIEnvelope<APIVoid>.self, from: data)
             if envelope.code != 0 {
@@ -122,7 +167,7 @@ final class GopeedClient {
     }
 
     private func send<T: Decodable>(_ path: String, method: String, body: Data?, query: [String: String] = [:]) async throws -> T {
-        let (data, status) = try await raw(path, method: method, body: body, query: query)
+        let (data, status) = try await raw(path, method: method, body: body, queryItems: dictQuery(query))
         do {
             let envelope = try decoder.decode(APIEnvelope<T>.self, from: data)
             if envelope.code != 0 {
@@ -140,12 +185,24 @@ final class GopeedClient {
     }
 
     private func raw(_ path: String, method: String, body: Data?, query: [String: String]) async throws -> (Data, Int) {
+        try await raw(path, method: method, body: body, queryItems: dictQuery(query))
+    }
+
+    private func idQuery(_ ids: [String]) -> [URLQueryItem] {
+        ids.map { URLQueryItem(name: "id", value: $0) }
+    }
+
+    private func dictQuery(_ query: [String: String]) -> [URLQueryItem] {
+        query.map { URLQueryItem(name: $0.key, value: $0.value) }
+    }
+
+    private func raw(_ path: String, method: String, body: Data?, queryItems: [URLQueryItem]) async throws -> (Data, Int) {
         guard let url = URL(string: engine.baseURL.absoluteString + path) else {
             throw GopeedClientError.engine("Invalid engine URL.")
         }
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
-        if !query.isEmpty {
-            components.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
+        if !queryItems.isEmpty {
+            components.queryItems = queryItems
         }
         guard let resolved = components.url else {
             throw GopeedClientError.engine("Invalid engine URL.")

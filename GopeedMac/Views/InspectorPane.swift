@@ -5,41 +5,10 @@ struct InspectorPane: View {
 
     var body: some View {
         Group {
-            if let task = store.selectedTask {
-                VStack(spacing: 0) {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: Theme.spaceLG) {
-                            header(task)
-                            identity(task)
-                            status(task)
-                            chunks(task)
-                            meta(task)
-                            SpeedChart(samples: store.speedHistory[task.id] ?? [], current: task.speed)
-                            metrics(task)
-                        }
-                        .padding(.horizontal, Theme.spaceXL)
-                        .padding(.top, Theme.spaceXL)
-                        .padding(.bottom, Theme.spaceLG)
-                    }
-                    .scrollIndicators(.never)
-                    .scrollEdgeEffectStyle(.soft, for: .bottom)
-                    .mask(alignment: .bottom) {
-                        VStack(spacing: 0) {
-                            Color.white
-                            LinearGradient(
-                                colors: [.white, .white.opacity(0)],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                            .frame(height: 44)
-                        }
-                    }
-
-                    controls(task)
-                        .padding(.horizontal, Theme.spaceXL)
-                        .padding(.bottom, Theme.spaceXL)
-                        .padding(.top, Theme.spaceSM)
-                }
+            if store.selectionState.isMultiple {
+                multiSelectionContent
+            } else if let task = store.selectedTask {
+                singleSelectionContent(task)
             } else {
                 VStack(spacing: Theme.spaceMD) {
                     Image(systemName: "sidebar.right")
@@ -53,15 +22,121 @@ struct InspectorPane: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private func header(_ task: DownloadTask) -> some View {
+    private func singleSelectionContent(_ task: DownloadTask) -> some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: Theme.spaceLG) {
+                    header
+                    identity(task)
+                    status(task)
+                    chunks(task)
+                    meta(task)
+                    SpeedChart(samples: store.speedHistory[task.id] ?? [], current: task.speed)
+                    metrics(task)
+                }
+                .padding(.horizontal, Theme.spaceXL)
+                .padding(.top, Theme.spaceXL)
+                .padding(.bottom, Theme.spaceLG)
+            }
+            .scrollIndicators(.never)
+            .scrollEdgeEffectStyle(.soft, for: .bottom)
+            .mask(alignment: .bottom) {
+                inspectorFade
+            }
+
+            controls(task)
+                .padding(.horizontal, Theme.spaceXL)
+                .padding(.bottom, Theme.spaceXL)
+                .padding(.top, Theme.spaceSM)
+        }
+    }
+
+    private var multiSelectionContent: some View {
+        let tasks = store.selectedTasks
+        let downloaded = tasks.reduce(Int64(0)) { $0 + $1.downloaded }
+        let total = tasks.reduce(Int64(0)) { $0 + $1.totalSize }
+        let fraction = total > 0 ? min(1, Double(downloaded) / Double(total)) : 0
+        return VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: Theme.spaceLG) {
+                    header
+                    HStack(spacing: Theme.spaceMD) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(Color.white.opacity(0.12))
+                            Image(systemName: "checkmark.circle")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: Theme.iconSize, height: Theme.iconSize)
+                                .foregroundStyle(.white)
+                        }
+                        .frame(width: 36, height: 36)
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("\(tasks.count) downloads selected")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(.white)
+                            Text(multiStatusLine(tasks))
+                                .font(.system(size: 12))
+                                .foregroundStyle(Theme.secondary)
+                        }
+                        Spacer()
+                    }
+                    GeometryReader { geo in
+                        ZStack(alignment: .leading) {
+                            Capsule().fill(Color.white.opacity(0.08))
+                            Capsule()
+                                .fill(Theme.accent)
+                                .frame(width: geo.size.width * fraction)
+                        }
+                    }
+                    .frame(height: 8)
+                    HStack(spacing: Theme.spaceMD) {
+                        metric("Downloaded", ByteFormat.string(downloaded))
+                        metric("Total Size", total > 0 ? ByteFormat.string(total) : "—")
+                    }
+                }
+                .padding(.horizontal, Theme.spaceXL)
+                .padding(.top, Theme.spaceXL)
+                .padding(.bottom, Theme.spaceLG)
+            }
+            .scrollIndicators(.never)
+            .scrollEdgeEffectStyle(.soft, for: .bottom)
+            .mask(alignment: .bottom) {
+                inspectorFade
+            }
+
+            multiControls
+                .padding(.horizontal, Theme.spaceXL)
+                .padding(.bottom, Theme.spaceXL)
+                .padding(.top, Theme.spaceSM)
+        }
+    }
+
+    private var inspectorFade: some View {
+        VStack(spacing: 0) {
+            Color.white
+            LinearGradient(
+                colors: [.white, .white.opacity(0)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .frame(height: 44)
+        }
+    }
+
+    private var header: some View {
         HStack {
             Button {
                 withAnimation(.spring(response: 0.42, dampingFraction: 0.86)) {
-                    store.inspectorCollapsed = true
+                    if store.compactLayout {
+                        store.compactInspectorShown = false
+                    } else {
+                        store.inspectorCollapsed = true
+                    }
                 }
             } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: "chevron.right")
+                    Image(systemName: store.compactLayout ? "chevron.left" : "chevron.right")
                         .font(.system(size: 11, weight: .semibold))
                     Text("Inspector")
                         .font(.system(size: 13, weight: .semibold))
@@ -72,7 +147,7 @@ struct InspectorPane: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(FullAreaButtonStyle())
-            .help("Hide Inspector")
+            .help(store.compactLayout ? "Back to Downloads" : "Hide Inspector")
             Spacer()
         }
     }
@@ -96,6 +171,9 @@ struct InspectorPane: View {
                     Text(task.displayName)
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(.white)
+                        .lineLimit(2)
+                        .truncationMode(.middle)
+                        .layoutPriority(1)
                     Button {
                         store.openURL(task)
                     } label: {
@@ -113,6 +191,7 @@ struct InspectorPane: View {
                     Circle().fill(statusColor(task)).frame(width: 7, height: 7)
                     Text("\(task.status.title)  •  \(task.percentText)")
                         .font(.system(size: 12))
+                        .lineLimit(1)
                         .foregroundStyle(Theme.secondary)
                 }
             }
@@ -133,16 +212,7 @@ struct InspectorPane: View {
     }
 
     private func chunks(_ task: DownloadTask) -> some View {
-        let connections = store.statsByID[task.id]?.connections ?? []
-        let total = max(connections.count, task.connections, 1)
-        let completed: Int = {
-            if !connections.isEmpty {
-                return connections.filter { $0.completed == true }.count
-            }
-            return Int((task.fraction * Double(256)).rounded())
-        }()
-        let visualTotal = connections.isEmpty ? 256 : total
-        return ChunkGrid(completed: connections.isEmpty ? completed : completed, total: visualTotal)
+        ChunkGrid(stats: store.statsByID[task.id], taskIsDone: task.status == .done)
             .frame(maxWidth: .infinity)
     }
 
@@ -158,6 +228,8 @@ struct InspectorPane: View {
                     .frame(width: 92, alignment: .leading)
                 Text(task.fileURL?.path ?? task.meta?.opts?.path ?? "—")
                     .foregroundStyle(.white)
+                    .lineLimit(3)
+                    .truncationMode(.middle)
                     .textSelection(.enabled)
                 Spacer()
                 Button { store.reveal(task) } label: {
@@ -185,75 +257,130 @@ struct InspectorPane: View {
                 metric("Current Speed", ByteFormat.speed(task.speed))
                 metric("Average Speed", ByteFormat.speed(task.averageSpeed))
             }
-            HStack(spacing: Theme.spaceMD) {
-                HStack {
-                    Text("Priority")
-                        .foregroundStyle(Theme.secondary)
-                    Spacer()
-                    Text("High")
-                        .padding(.horizontal, Theme.spaceMD)
-                        .padding(.vertical, Theme.spaceXS)
-                        .background(Color.white.opacity(0.08), in: Capsule())
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 9))
-                        .foregroundStyle(Theme.tertiary)
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: Theme.spaceMD) {
+                    priorityControl
+                    connectionsControl(task)
                 }
-                .padding(Theme.spaceMD)
-                .liquidGlass(cornerRadius: 16)
-
-                HStack(spacing: Theme.spaceSM) {
-                    Text("Connections")
-                        .foregroundStyle(Theme.secondary)
-                    Button {
-                        Task { await store.setConnections(max(1, store.connectionsDraft - 1), for: task) }
-                    } label: {
-                        Image(systemName: "minus")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: Theme.iconSize, height: Theme.iconSize)
-                            .frame(width: 28, height: 28)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(FullAreaButtonStyle())
-                    Slider(
-                        value: Binding(
-                            get: { Double(store.connectionsDraft) },
-                            set: { store.connectionsDraft = Int($0) }
-                        ),
-                        in: 1...32,
-                        step: 1
-                    ) { editing in
-                        if !editing {
-                            Task { await store.setConnections(store.connectionsDraft, for: task) }
-                        }
-                    }
-                    .tint(Theme.accent)
-                    Button {
-                        Task { await store.setConnections(min(32, store.connectionsDraft + 1), for: task) }
-                    } label: {
-                        Image(systemName: "plus")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: Theme.iconSize, height: Theme.iconSize)
-                            .frame(width: 28, height: 28)
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(FullAreaButtonStyle())
-                    Text("\(store.connectionsDraft) / 32")
-                        .monospacedDigit()
-                        .foregroundStyle(.white)
-                        .frame(width: 52, alignment: .trailing)
+                VStack(spacing: Theme.spaceMD) {
+                    priorityControl
+                    connectionsControl(task)
                 }
-                .padding(Theme.spaceMD)
-                .liquidGlass(cornerRadius: 16)
             }
             .font(.system(size: 12))
         }
     }
 
+    private var priorityControl: some View {
+        HStack {
+            Text("Priority")
+                .foregroundStyle(Theme.secondary)
+            Spacer()
+            Text("High")
+                .padding(.horizontal, Theme.spaceMD)
+                .padding(.vertical, Theme.spaceXS)
+                .background(Color.white.opacity(0.08), in: Capsule())
+            Image(systemName: "chevron.up.chevron.down")
+                .font(.system(size: 9))
+                .foregroundStyle(Theme.tertiary)
+        }
+        .padding(Theme.spaceMD)
+        .liquidGlass(cornerRadius: 16)
+    }
+
+    private func connectionsControl(_ task: DownloadTask) -> some View {
+        HStack(spacing: Theme.spaceSM) {
+            Text("Connections")
+                .foregroundStyle(Theme.secondary)
+                .fixedSize()
+            Button {
+                Task { await store.setConnections(max(1, store.connectionsDraft - 1), for: task) }
+            } label: {
+                Image(systemName: "minus")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Theme.iconSize, height: Theme.iconSize)
+                    .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(FullAreaButtonStyle())
+            Slider(
+                value: Binding(
+                    get: { Double(store.connectionsDraft) },
+                    set: { store.connectionsDraft = Int($0) }
+                ),
+                in: 1...32,
+                step: 1
+            ) { editing in
+                if !editing {
+                    Task { await store.setConnections(store.connectionsDraft, for: task) }
+                }
+            }
+            .tint(Theme.accent)
+            .frame(minWidth: 120)
+            Button {
+                Task { await store.setConnections(min(32, store.connectionsDraft + 1), for: task) }
+            } label: {
+                Image(systemName: "plus")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Theme.iconSize, height: Theme.iconSize)
+                    .frame(width: 28, height: 28)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(FullAreaButtonStyle())
+            Text("\(store.connectionsDraft) / 32")
+                .monospacedDigit()
+                .foregroundStyle(.white)
+                .frame(width: 52, alignment: .trailing)
+        }
+        .padding(Theme.spaceMD)
+        .liquidGlass(cornerRadius: 16)
+    }
+
+    private var multiControls: some View {
+        VStack(spacing: 12) {
+            EqualWidthHStack(spacing: 12) {
+                inspectorAction("Pause", symbol: "pause.fill", kind: .prominent) {
+                    Task { await store.pauseSelected() }
+                }
+                .disabled(!store.canPauseSelected)
+                inspectorAction("Resume", symbol: "play.fill", kind: .regular) {
+                    Task { await store.resumeSelected() }
+                }
+                .disabled(!store.canResumeSelected)
+            }
+            EqualWidthHStack(spacing: 12) {
+                inspectorAction("Reveal", symbol: "folder", kind: .regular) {
+                    store.revealSelected()
+                }
+                inspectorAction("Remove", symbol: "minus", kind: .regular) {
+                    Task { await store.deleteSelected(removeFiles: false) }
+                }
+                inspectorAction("Delete", symbol: "trash", kind: .danger) {
+                    Task { await store.deleteSelected(removeFiles: true) }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func multiStatusLine(_ tasks: [DownloadTask]) -> String {
+        var parts: [String] = []
+        let running = tasks.filter { $0.status == .running || $0.status == .wait }.count
+        let paused = tasks.filter { $0.status == .pause }.count
+        let done = tasks.filter { $0.status == .done }.count
+        let failed = tasks.filter { $0.status == .error }.count
+        if running > 0 { parts.append("\(running) downloading") }
+        if paused > 0 { parts.append("\(paused) paused") }
+        if done > 0 { parts.append("\(done) completed") }
+        if failed > 0 { parts.append("\(failed) failed") }
+        return parts.isEmpty ? "\(tasks.count) selected" : parts.joined(separator: "  ·  ")
+    }
+
     private func controls(_ task: DownloadTask) -> some View {
         EqualWidthHStack(spacing: 12) {
-            if task.status == .running || task.status == .wait || task.status == .ready {
+            if task.canPause {
                 inspectorAction("Pause", symbol: "pause.fill", kind: .prominent) {
                     Task { await store.pause(task) }
                 }

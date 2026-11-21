@@ -267,13 +267,9 @@ struct DownloadCard: View, Equatable {
         .help(canPause ? "Pause" : (canResume ? "Resume" : task.percentText))
     }
 
-    private var canPause: Bool {
-        task.status == .running || task.status == .wait || task.status == .ready
-    }
+    private var canPause: Bool { task.canPause }
 
-    private var canResume: Bool {
-        task.status == .pause || task.status == .error
-    }
+    private var canResume: Bool { task.canResume }
 
     private var sizeLine: String {
         if task.totalSize > 0 {
@@ -284,6 +280,7 @@ struct DownloadCard: View, Equatable {
 
     private var ringColor: Color {
         if task.status == .done { return Theme.success }
+        if task.status == .pause { return Color.white.opacity(0.35) }
         return kind.color
     }
 }

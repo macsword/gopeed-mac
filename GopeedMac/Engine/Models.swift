@@ -92,6 +92,14 @@ struct DownloadTask: Identifiable, Decodable, Hashable {
     var connections: Int {
         meta?.opts?.extra?.connections ?? 16
     }
+
+    var canPause: Bool {
+        status == .running || status == .wait || status == .ready
+    }
+
+    var canResume: Bool {
+        status == .pause || status == .error
+    }
 }
 
 struct TaskProgress: Decodable, Hashable {
@@ -126,17 +134,6 @@ struct TaskOptions: Decodable, Hashable {
 
 struct TaskExtra: Decodable, Hashable {
     let connections: Int?
-}
-
-struct TaskStats: Decodable, Hashable {
-    let connections: [StatConnection]?
-}
-
-struct StatConnection: Decodable, Hashable {
-    let downloaded: Int64?
-    let total: Int64?
-    let completed: Bool?
-    let failed: Bool?
 }
 
 struct CreateTaskBody: Encodable {
@@ -180,6 +177,14 @@ enum SidebarFilter: String, CaseIterable, Identifiable {
         case .all: return "All"
         case .active: return "Active"
         case .done: return "Done"
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .all: return "tray.2"
+        case .active: return "arrow.down.circle"
+        case .done: return "checkmark.circle"
         }
     }
 

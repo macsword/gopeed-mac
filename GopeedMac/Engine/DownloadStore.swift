@@ -11,7 +11,7 @@ final class DownloadStore: ObservableObject {
     @Published var typeFilter: FileKind.Category = .all {
         didSet { reconcileSelection() }
     }
-    @Published var selection: DownloadTask.ID?
+    @Published var selectionState = TaskSelection()
     @Published var openCardActions: DownloadTask.ID?
     @Published var search = "" {
         didSet { reconcileSelection() }
@@ -26,6 +26,10 @@ final class DownloadStore: ObservableObject {
     @Published var sort: TaskSort = .added
     @Published var sortAscending = false
     @Published var inspectorCollapsed = false
+    /// True while the window is too narrow to show list and inspector side by side.
+    @Published var compactLayout = false
+    /// In compact layout, whether the inspector replaces the list.
+    @Published var compactInspectorShown = false
     @Published var engineConfig: [String: Any] = [:]
     @Published var defaultDownloadDir: String = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first?.path ?? ""
     @Published var defaultConnections: Int = 16
@@ -40,6 +44,8 @@ final class DownloadStore: ObservableObject {
     private var lastSnapshot: [TaskSnapshot] = []
     private var lastStatsAt = Date.distantPast
     private var lastStatsID: String?
+    private var completionTracker = CompletionTracker()
+    private let notifier = DownloadNotifier.shared
 
     var visibleTasks: [DownloadTask] {
         var list = tasks.filter { task in
@@ -68,11 +74,31 @@ final class DownloadStore: ObservableObject {
         return list
     }
 
+    var selection: DownloadTask.ID? { selectionState.primary }
+
+    var selectedIDs: Set<DownloadTask.ID> { selectionState.ids }
+
+    var selectedTasks: [DownloadTask] {
+        visibleTasks.filter { selectionState.contains($0.id) }
+    }
+
     var selectedTask: DownloadTask? {
-        if let selection, let match = tasks.first(where: { $0.id == selection }) {
+        if let id = selectionState.primary, let match = tasks.first(where: { $0.id == id }) {
             return match
         }
         return visibleTasks.first
+    }
+
+    var allVisibleSelected: Bool {
+        selectionState.areAllSelected(visibleTasks.map(\.id))
+    }
+
+    var canPauseSelected: Bool {
+        selectedTasks.contains { $0.canPause }
+    }
+
+    var canResumeSelected: Bool {
+        selectedTasks.contains { $0.canResume }
     }
 
     func start() {
@@ -80,6 +106,16 @@ final class DownloadStore: ObservableObject {
             try GopeedEngine.shared.start()
             isEngineReady = true
             engineError = nil
+            notifier.requestAuthorizationIfNeeded()
+            notifier.onOpenTask = { [weak self] id in
+                guard let self else { return }
+                self.filter = .all
+                self.typeFilter = .all
+                self.search = ""
+                self.selectOnly(id)
+                self.inspectorCollapsed = false
+                self.compactInspectorShown = true
+            }
             startPolling()
             Task { await loadConfig() }
         } catch {
@@ -98,6 +134,7 @@ final class DownloadStore: ObservableObject {
         guard isEngineReady else { return }
         do {
             let list = try await client.listTasks()
+            notifyFinished(in: list)
             let snapshot = list.map(TaskSnapshot.init)
             if snapshot != lastSnapshot {
                 var transaction = Transaction()
@@ -108,7 +145,7 @@ final class DownloadStore: ObservableObject {
                 lastSnapshot = snapshot
             }
             reconcileSelection()
-            if let selected = selectedTask {
+            if let selected = selectedTask, !selectionState.isMultiple {
                 if selected.status == .running {
                     recordSpeed(for: selected)
                 }
@@ -117,8 +154,14 @@ final class DownloadStore: ObservableObject {
                 if needsStats {
                     lastStatsAt = Date()
                     lastStatsID = selected.id
-                    if let stats = try? await client.stats(id: selected.id), statsByID[selected.id] != stats {
-                        statsByID[selected.id] = stats
+                    do {
+                        let stats = try await client.stats(id: selected.id)
+                        if statsByID[selected.id] != stats {
+                            statsByID[selected.id] = stats
+                        }
+                    } catch {
+                        // Keep the last known stats; a transient stats failure
+                        // should not raise the engine alert.
                     }
                     if connectionsDraft != selected.connections {
                         connectionsDraft = selected.connections
@@ -161,7 +204,7 @@ final class DownloadStore: ObservableObject {
         }
         await refresh()
         if let lastID {
-            selection = lastID
+            selectOnly(lastID)
         }
     }
 
@@ -207,22 +250,96 @@ final class DownloadStore: ObservableObject {
         }
     }
 
+    func selectOnly(_ id: DownloadTask.ID) {
+        selectionState.selectOnly(id)
+    }
+
+    func handleCardSelect(_ id: DownloadTask.ID) {
+        let flags = NSEvent.modifierFlags
+        let modifier: SelectionModifier
+        if flags.contains(.shift) {
+            modifier = .range
+        } else if flags.contains(.command) {
+            modifier = .toggle
+        } else {
+            modifier = .replace
+        }
+        selectionState.handleClick(id, visible: visibleTasks.map(\.id), modifier: modifier)
+    }
+
+    func selectAllVisible() {
+        selectionState.selectAll(visibleTasks.map(\.id))
+    }
+
+    func collapseSelection() {
+        selectionState.collapse()
+    }
+
+    func toggleSelectAllVisible() {
+        if allVisibleSelected {
+            collapseSelection()
+        } else {
+            selectAllVisible()
+        }
+    }
+
+    func actionTargets(for task: DownloadTask) -> [DownloadTask] {
+        if selectionState.contains(task.id), selectionState.isMultiple {
+            return selectedTasks
+        }
+        return [task]
+    }
+
     func pause(_ task: DownloadTask) async {
-        await run { try await client.pause(id: task.id) }
+        await pause(tasks: [task])
     }
 
     func resume(_ task: DownloadTask) async {
-        await run { try await client.resume(id: task.id) }
+        await resume(tasks: [task])
+    }
+
+    func pauseSelected() async {
+        await pause(tasks: selectedTasks)
+    }
+
+    func resumeSelected() async {
+        await resume(tasks: selectedTasks)
     }
 
     func delete(_ task: DownloadTask, removeFiles: Bool) async {
-        await run { try await client.delete(id: task.id, removeFiles: removeFiles) }
-        if selection == task.id {
-            selection = nil
+        await delete(tasks: [task], removeFiles: removeFiles)
+    }
+
+    func deleteSelected(removeFiles: Bool) async {
+        await delete(tasks: selectedTasks, removeFiles: removeFiles)
+    }
+
+    func revealSelected() {
+        reveal(tasks: selectedTasks)
+    }
+
+    func pause(tasks: [DownloadTask]) async {
+        let ids = tasks.filter(\.canPause).map(\.id)
+        guard !ids.isEmpty else { return }
+        await run { try await client.pause(ids: ids) }
+    }
+
+    func resume(tasks: [DownloadTask]) async {
+        let ids = tasks.filter(\.canResume).map(\.id)
+        guard !ids.isEmpty else { return }
+        await run { try await client.resume(ids: ids) }
+    }
+
+    func delete(tasks: [DownloadTask], removeFiles: Bool) async {
+        let ids = tasks.map(\.id)
+        guard !ids.isEmpty else { return }
+        await run { try await client.delete(ids: ids, removeFiles: removeFiles) }
+        let gone = Set(ids)
+        selectionState.remove(gone)
+        if let openCardActions, gone.contains(openCardActions) {
+            self.openCardActions = nil
         }
-        if openCardActions == task.id {
-            openCardActions = nil
-        }
+        reconcileSelection()
     }
 
     func setConnections(_ value: Int, for task: DownloadTask) async {
@@ -231,12 +348,24 @@ final class DownloadStore: ObservableObject {
     }
 
     func reveal(_ task: DownloadTask) {
-        if let file = task.fileURL, FileManager.default.fileExists(atPath: file.path) {
-            NSWorkspace.shared.activateFileViewerSelecting([file])
-            return
+        reveal(tasks: [task])
+    }
+
+    func reveal(tasks: [DownloadTask]) {
+        var files: [URL] = []
+        var folders: [URL] = []
+        for task in tasks {
+            if let file = task.fileURL, FileManager.default.fileExists(atPath: file.path) {
+                files.append(file)
+            } else if let path = task.meta?.opts?.path {
+                folders.append(URL(fileURLWithPath: path))
+            }
         }
-        if let path = task.meta?.opts?.path {
-            NSWorkspace.shared.open(URL(fileURLWithPath: path))
+        if !files.isEmpty {
+            NSWorkspace.shared.activateFileViewerSelecting(files)
+        }
+        for folder in folders {
+            NSWorkspace.shared.open(folder)
         }
     }
 
@@ -257,6 +386,14 @@ final class DownloadStore: ObservableObject {
         speedHistory[task.id] = samples
     }
 
+    private func notifyFinished(in list: [DownloadTask]) {
+        let finished = completionTracker.newlyCompleted(list.map { (id: $0.id, isDone: $0.status == .done) })
+        for id in finished {
+            guard let task = list.first(where: { $0.id == id }) else { continue }
+            notifier.postFinished(taskID: task.id, name: task.displayName, filePath: task.fileURL?.path)
+        }
+    }
+
     private func run(_ work: () async throws -> Void) async {
         do {
             try await work()
@@ -267,10 +404,7 @@ final class DownloadStore: ObservableObject {
     }
 
     private func reconcileSelection() {
-        if let selection, visibleTasks.contains(where: { $0.id == selection }) {
-            return
-        }
-        selection = visibleTasks.first?.id
+        selectionState.reconcile(visible: visibleTasks.map(\.id))
     }
 
     private func startPolling() {

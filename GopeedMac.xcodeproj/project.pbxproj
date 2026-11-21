@@ -7,14 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8CA100022026112100000001 /* AppUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA100012026112100000001 /* AppUpdater.swift */; };
+		8CA100022026112100000002 /* UpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA100012026112100000002 /* UpdateView.swift */; };
 		0518AF18F3ABC8DF3F4FEBE7 /* libgopeed.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CD47903E4CA9646C0A52A2BE /* libgopeed.dylib */; };
 		2076A505CBFE2CB6ADF79FDD /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4170DF74D17C1F6ED97C253 /* Theme.swift */; };
 		4601C4D4376B27B345C0F898 /* AddDownloadSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98290E0D7CC6F90940253818 /* AddDownloadSheet.swift */; };
 		4955F10BDBCD2B440EF8E47C /* FileKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 840BFCE974BE16F9608FA69B /* FileKind.swift */; };
+		496F9CF78FD516D5E5B4D132 /* TaskStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC70BD384E432FA0CCBE2189 /* TaskStats.swift */; };
 		4C998D6677F829697CBB41F3 /* DownloadLinkParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E536AAAA1A824A1EC8009D41 /* DownloadLinkParser.swift */; };
 		4CB4B4F865A3FAA401D3C104 /* TypeTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BCC8725C7D6480CBD67B52 /* TypeTabBar.swift */; };
 		4D3CD493ABB6FF203EB4F6E7 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEDE2E8A9DDB96BE78A6D916 /* Models.swift */; };
 		4F08EC2B625F13AC3C38CDE2 /* GopeedEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C32AB4ABA1285F0868D347E /* GopeedEngine.swift */; };
+		5B49DED7F84057C63B401497 /* TaskSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3D27A0A10E38956F7705A09 /* TaskSelection.swift */; };
 		5E8B6EF59E3C2909543FC6E9 /* WindowChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DBF995B812913986C1E195 /* WindowChrome.swift */; };
 		60094F8C9C35CA0EA270F523 /* GopeedClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42AF6A3DEBEB0A52F96A38B2 /* GopeedClient.swift */; };
 		653A4929A14DF10A0E82D167 /* InspectorPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51928F4B091E89E1A41D1AC4 /* InspectorPane.swift */; };
@@ -27,6 +31,7 @@
 		9D3E0684B11D80FA50981933 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3ED7F121BACA600F208E86 /* ContentView.swift */; };
 		A7CA1D779A024C2FA3FBF761 /* ChunkGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7AE620BEB17EE544A57EEE /* ChunkGrid.swift */; };
 		AEE155368C08BD6B91CDF47C /* CircularProgressRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B176DFAC60EA9194F01B65 /* CircularProgressRing.swift */; };
+		C22E7F2CF4454978B0EF9628 /* DownloadNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB6590D28995475648AACC8 /* DownloadNotifier.swift */; };
 		C77D5B4D40C73EDE66381C18 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0610C17F4B45C0A0505883B7 /* Assets.xcassets */; };
 		D81A932EC09A1D94390D1AB3 /* GopeedMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1C465FD1A83C6C1E6FF346 /* GopeedMacApp.swift */; };
 		E0931E96C767AD07B693B5B0 /* libgopeed.dylib in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CD47903E4CA9646C0A52A2BE /* libgopeed.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -47,6 +52,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8CA100012026112100000001 /* AppUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdater.swift; sourceTree = "<group>"; };
+		8CA100012026112100000002 /* UpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateView.swift; sourceTree = "<group>"; };
 		0610C17F4B45C0A0505883B7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		14C039CA378D97F56DA692A4 /* GopeedMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GopeedMac.entitlements; sourceTree = "<group>"; };
 		42AF6A3DEBEB0A52F96A38B2 /* GopeedClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GopeedClient.swift; sourceTree = "<group>"; };
@@ -61,6 +68,7 @@
 		840BFCE974BE16F9608FA69B /* FileKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileKind.swift; sourceTree = "<group>"; };
 		881667E63039CC32691CAC8C /* DownloadCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadCard.swift; sourceTree = "<group>"; };
 		8C5F8140E02C56577876728F /* SpeedChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedChart.swift; sourceTree = "<group>"; };
+		8CB6590D28995475648AACC8 /* DownloadNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadNotifier.swift; sourceTree = "<group>"; };
 		97DBF995B812913986C1E195 /* WindowChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowChrome.swift; sourceTree = "<group>"; };
 		98290E0D7CC6F90940253818 /* AddDownloadSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDownloadSheet.swift; sourceTree = "<group>"; };
 		A06DB930E69A3D5B872A337E /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -71,7 +79,9 @@
 		D115D4A79F0B27C737B8FD8F /* GopeedMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GopeedMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DAB928F5EC84C217961F629B /* DownloadStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadStore.swift; sourceTree = "<group>"; };
 		DEDE2E8A9DDB96BE78A6D916 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		E3D27A0A10E38956F7705A09 /* TaskSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSelection.swift; sourceTree = "<group>"; };
 		E536AAAA1A824A1EC8009D41 /* DownloadLinkParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadLinkParser.swift; sourceTree = "<group>"; };
+		FC70BD384E432FA0CCBE2189 /* TaskStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStats.swift; sourceTree = "<group>"; };
 		FD2F534EEF33E8DE4B191776 /* GopeedMac-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GopeedMac-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -108,6 +118,7 @@
 		3A4F117970221B85DFC44D6F /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8CA100012026112100000002 /* UpdateView.swift */,
 				98290E0D7CC6F90940253818 /* AddDownloadSheet.swift */,
 				BF7AE620BEB17EE544A57EEE /* ChunkGrid.swift */,
 				64B176DFAC60EA9194F01B65 /* CircularProgressRing.swift */,
@@ -126,12 +137,16 @@
 		780EAD07603D98DD30B307C3 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				8CA100012026112100000001 /* AppUpdater.swift */,
 				E536AAAA1A824A1EC8009D41 /* DownloadLinkParser.swift */,
+				8CB6590D28995475648AACC8 /* DownloadNotifier.swift */,
 				DAB928F5EC84C217961F629B /* DownloadStore.swift */,
 				42AF6A3DEBEB0A52F96A38B2 /* GopeedClient.swift */,
 				7C32AB4ABA1285F0868D347E /* GopeedEngine.swift */,
 				FD2F534EEF33E8DE4B191776 /* GopeedMac-Bridging-Header.h */,
 				DEDE2E8A9DDB96BE78A6D916 /* Models.swift */,
+				E3D27A0A10E38956F7705A09 /* TaskSelection.swift */,
+				FC70BD384E432FA0CCBE2189 /* TaskStats.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -263,6 +278,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8CA100022026112100000001 /* AppUpdater.swift in Sources */,
+				8CA100022026112100000002 /* UpdateView.swift in Sources */,
 				4601C4D4376B27B345C0F898 /* AddDownloadSheet.swift in Sources */,
 				A7CA1D779A024C2FA3FBF761 /* ChunkGrid.swift in Sources */,
 				AEE155368C08BD6B91CDF47C /* CircularProgressRing.swift in Sources */,
@@ -270,6 +287,7 @@
 				7940263AF6BDB12EF690E753 /* DownloadCard.swift in Sources */,
 				4C998D6677F829697CBB41F3 /* DownloadLinkParser.swift in Sources */,
 				677E54CC979A3F47996A81B1 /* DownloadListPane.swift in Sources */,
+				C22E7F2CF4454978B0EF9628 /* DownloadNotifier.swift in Sources */,
 				752D7748AC2B43417700EB75 /* DownloadStore.swift in Sources */,
 				4955F10BDBCD2B440EF8E47C /* FileKind.swift in Sources */,
 				99EEA85330E9ABC81FC277BF /* FluidTabBar.swift in Sources */,
@@ -280,6 +298,8 @@
 				4D3CD493ABB6FF203EB4F6E7 /* Models.swift in Sources */,
 				74DA2EC14ED737CBA68040F6 /* SettingsView.swift in Sources */,
 				8912E1F173B279743F03FE3D /* SpeedChart.swift in Sources */,
+				5B49DED7F84057C63B401497 /* TaskSelection.swift in Sources */,
+				496F9CF78FD516D5E5B4D132 /* TaskStats.swift in Sources */,
 				2076A505CBFE2CB6ADF79FDD /* Theme.swift in Sources */,
 				4CB4B4F865A3FAA401D3C104 /* TypeTabBar.swift in Sources */,
 				5E8B6EF59E3C2909543FC6E9 /* WindowChrome.swift in Sources */,
@@ -324,7 +344,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -345,7 +365,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -448,7 +468,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -463,7 +483,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

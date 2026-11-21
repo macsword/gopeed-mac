@@ -4,6 +4,8 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject private var store: DownloadStore
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var updater = AppUpdater.shared
+    @AppStorage("autoCheckUpdates") private var autoCheckUpdates = true
 
     @State private var raw: [String: Any] = [:]
     @State private var downloadDir = ""
@@ -71,6 +73,35 @@ struct SettingsView: View {
                                     .font(.system(size: 11))
                                     .foregroundStyle(Theme.tertiary)
                             }
+                        }
+                        section("Updates") {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text("GDM for macOS")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundStyle(.white)
+                                    Text("Version \(updater.currentVersion)")
+                                        .font(.system(size: 12))
+                                        .foregroundStyle(Theme.secondary)
+                                }
+                                Spacer()
+                                Button {
+                                    Task { await updater.checkForUpdates(userInitiated: true) }
+                                } label: {
+                                    HStack(spacing: 6) {
+                                        if updater.isChecking {
+                                            ProgressView()
+                                                .controlSize(.small)
+                                        } else {
+                                            Image(systemName: "arrow.triangle.2.circlepath")
+                                        }
+                                        Text(updater.isChecking ? "Checking…" : "Check for Updates…")
+                                    }
+                                }
+                                .buttonStyle(CapsuleActionButtonStyle(kind: .regular))
+                                .disabled(updater.isChecking)
+                            }
+                            toggleRow("Automatically check for updates", isOn: $autoCheckUpdates)
                         }
                         section("General") {
                             folderRow
