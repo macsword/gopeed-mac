@@ -180,6 +180,14 @@ enum SidebarFilter: String, CaseIterable, Identifiable {
         }
     }
 
+    var symbol: String {
+        switch self {
+        case .all: return "tray.2"
+        case .active: return "arrow.down.circle"
+        case .done: return "checkmark.circle"
+        }
+    }
+
     func matches(_ task: DownloadTask) -> Bool {
         switch self {
         case .all: return true

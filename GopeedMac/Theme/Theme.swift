@@ -29,7 +29,9 @@ enum Theme {
     static let listPaneMinWidth: CGFloat = 280
     static let inspectorMinWidth: CGFloat = 340
     /// Below this content width the list and inspector are shown one at a time.
-    static let splitLayoutMinWidth: CGFloat = listPaneMinWidth + inspectorMinWidth + spaceMD * 3
+    /// Set higher than the raw sum of pane mins so the switch happens before
+    /// the panes start visually breaking.
+    static let splitLayoutMinWidth: CGFloat = 1100
     static let scrollFadeHeight: CGFloat = 44
     static let toolbarFill = Color.black.opacity(0.52)
     static let paneTint = Color.black.opacity(0.78)

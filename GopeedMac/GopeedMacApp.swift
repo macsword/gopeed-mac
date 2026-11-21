@@ -10,7 +10,15 @@ struct GopeedMacApp: App {
             ContentView()
                 .environmentObject(store)
                 .frame(minWidth: 560, minHeight: 480)
-                .onAppear { store.start() }
+                .onAppear {
+                    store.start()
+                    if UserDefaults.standard.object(forKey: "autoCheckUpdates") == nil || UserDefaults.standard.bool(forKey: "autoCheckUpdates") {
+                        Task {
+                            try? await Task.sleep(nanoseconds: 3_000_000_000)
+                            await AppUpdater.shared.checkForUpdates(userInitiated: false)
+                        }
+                    }
+                }
                 .onReceive(NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)) { _ in
                     store.stop()
                 }
@@ -21,6 +29,11 @@ struct GopeedMacApp: App {
         .windowBackgroundDragBehavior(.enabled)
         .defaultSize(width: 1380, height: 760)
         .commands {
+            CommandGroup(after: .appInfo) {
+                Button("Check for Updates…") {
+                    Task { await AppUpdater.shared.checkForUpdates(userInitiated: true) }
+                }
+            }
             CommandGroup(replacing: .newItem) {
                 Button("New Download…") {
                     NotificationCenter.default.post(name: .gopeedNewDownload, object: nil)

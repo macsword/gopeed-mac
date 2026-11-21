@@ -3,6 +3,7 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var store: DownloadStore
+    @ObservedObject private var updater = AppUpdater.shared
     @Namespace private var glassSpace
     @State private var dropTargeted = false
 
@@ -28,8 +29,10 @@ struct ContentView: View {
                     }
                     .onAppear { store.compactLayout = compact }
                     .onChange(of: compact) { _, value in
-                        store.compactLayout = value
-                        if !value { store.compactInspectorShown = false }
+                        withAnimation(.spring(response: 0.38, dampingFraction: 0.82)) {
+                            store.compactLayout = value
+                            if !value { store.compactInspectorShown = false }
+                        }
                     }
                 }
             }
@@ -49,6 +52,22 @@ struct ContentView: View {
         .sheet(isPresented: $store.showingSettings) {
             SettingsView()
                 .environmentObject(store)
+        }
+        .sheet(isPresented: $updater.showUpdateSheet) {
+            UpdateView(updater: updater)
+        }
+        .alert("You're Up to Date", isPresented: $updater.showUpToDateAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("GDM \(updater.currentVersion) is currently the newest version available.")
+        }
+        .alert("Update Check Failed", isPresented: Binding(
+            get: { updater.errorMessage != nil && !updater.showUpdateSheet },
+            set: { if !$0 { updater.errorMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { updater.errorMessage = nil }
+        } message: {
+            Text(updater.errorMessage ?? "")
         }
         .alert("Engine", isPresented: Binding(
             get: { store.engineError != nil },
@@ -152,44 +171,59 @@ struct ContentView: View {
         HStack(spacing: 8) {
             Color.clear.frame(width: 68, height: 12)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    FluidTabBar(selection: $store.filter)
-                    TypeTabBar(selection: $store.typeFilter)
-                }
-            }
-
-            SearchBar(text: $store.search)
-                .id("gdm.search")
-
-            Menu {
-                Picker("Sort By", selection: $store.sort) {
-                    ForEach(TaskSort.allCases) { option in
-                        Text(option.title).tag(option)
+            if store.compactLayout {
+                FluidTabBar(selection: $store.filter, compact: true)
+                TypeTabBar(selection: $store.typeFilter, compact: true)
+                SearchBar(text: $store.search)
+                    .id("gdm.search")
+                sortMenu
+                Spacer(minLength: 0)
+            } else {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        FluidTabBar(selection: $store.filter, compact: false)
+                        TypeTabBar(selection: $store.typeFilter, compact: false)
                     }
                 }
-                Button(store.sortAscending ? "Sort Descending" : "Sort Ascending") {
-                    store.sortAscending.toggle()
-                }
-            } label: {
-                Image(systemName: "line.3.horizontal.decrease")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Theme.iconSize, height: Theme.iconSize)
-                    .foregroundStyle(Theme.secondary)
-                    .frame(width: Theme.toolbarHeight, height: Theme.toolbarHeight)
-                    .contentShape(Circle())
+
+                SearchBar(text: $store.search)
+                    .id("gdm.search")
+
+                sortMenu
             }
-            .buttonStyle(FullAreaButtonStyle())
-            .menuIndicator(.hidden)
-            .sizedGlass(width: Theme.toolbarHeight, height: Theme.toolbarHeight, cornerRadius: Theme.toolbarHeight / 2)
-            .help("Sort downloads")
-            .focusable(false)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .frame(height: Theme.toolbarHeight)
         .padding(.top, 8)
         .padding(.trailing, 16)
         .padding(.bottom, 14)
+        .animation(.spring(response: 0.38, dampingFraction: 0.82), value: store.compactLayout)
+    }
+
+    private var sortMenu: some View {
+        Menu {
+            Picker("Sort By", selection: $store.sort) {
+                ForEach(TaskSort.allCases) { option in
+                    Text(option.title).tag(option)
+                }
+            }
+            Button(store.sortAscending ? "Sort Descending" : "Sort Ascending") {
+                store.sortAscending.toggle()
+            }
+        } label: {
+            Image(systemName: "line.3.horizontal.decrease")
+                .resizable()
+                .scaledToFit()
+                .frame(width: Theme.iconSize, height: Theme.iconSize)
+                .foregroundStyle(Theme.secondary)
+                .frame(width: Theme.toolbarHeight, height: Theme.toolbarHeight)
+                .contentShape(Circle())
+        }
+        .buttonStyle(FullAreaButtonStyle())
+        .menuIndicator(.hidden)
+        .sizedGlass(width: Theme.toolbarHeight, height: Theme.toolbarHeight, cornerRadius: Theme.toolbarHeight / 2)
+        .help("Sort downloads")
+        .focusable(false)
     }
 }
 

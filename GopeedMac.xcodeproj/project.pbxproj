@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8CA100022026112100000001 /* AppUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA100012026112100000001 /* AppUpdater.swift */; };
+		8CA100022026112100000002 /* UpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA100012026112100000002 /* UpdateView.swift */; };
 		0518AF18F3ABC8DF3F4FEBE7 /* libgopeed.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CD47903E4CA9646C0A52A2BE /* libgopeed.dylib */; };
 		2076A505CBFE2CB6ADF79FDD /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4170DF74D17C1F6ED97C253 /* Theme.swift */; };
 		4601C4D4376B27B345C0F898 /* AddDownloadSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98290E0D7CC6F90940253818 /* AddDownloadSheet.swift */; };
@@ -50,6 +52,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8CA100012026112100000001 /* AppUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdater.swift; sourceTree = "<group>"; };
+		8CA100012026112100000002 /* UpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateView.swift; sourceTree = "<group>"; };
 		0610C17F4B45C0A0505883B7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		14C039CA378D97F56DA692A4 /* GopeedMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GopeedMac.entitlements; sourceTree = "<group>"; };
 		42AF6A3DEBEB0A52F96A38B2 /* GopeedClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GopeedClient.swift; sourceTree = "<group>"; };
@@ -114,6 +118,7 @@
 		3A4F117970221B85DFC44D6F /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				8CA100012026112100000002 /* UpdateView.swift */,
 				98290E0D7CC6F90940253818 /* AddDownloadSheet.swift */,
 				BF7AE620BEB17EE544A57EEE /* ChunkGrid.swift */,
 				64B176DFAC60EA9194F01B65 /* CircularProgressRing.swift */,
@@ -132,6 +137,7 @@
 		780EAD07603D98DD30B307C3 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				8CA100012026112100000001 /* AppUpdater.swift */,
 				E536AAAA1A824A1EC8009D41 /* DownloadLinkParser.swift */,
 				8CB6590D28995475648AACC8 /* DownloadNotifier.swift */,
 				DAB928F5EC84C217961F629B /* DownloadStore.swift */,
@@ -272,6 +278,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8CA100022026112100000001 /* AppUpdater.swift in Sources */,
+				8CA100022026112100000002 /* UpdateView.swift in Sources */,
 				4601C4D4376B27B345C0F898 /* AddDownloadSheet.swift in Sources */,
 				A7CA1D779A024C2FA3FBF761 /* ChunkGrid.swift in Sources */,
 				AEE155368C08BD6B91CDF47C /* CircularProgressRing.swift in Sources */,
@@ -336,7 +344,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -357,7 +365,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -460,7 +468,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -475,7 +483,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

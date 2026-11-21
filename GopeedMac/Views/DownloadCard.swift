@@ -280,6 +280,7 @@ struct DownloadCard: View, Equatable {
 
     private var ringColor: Color {
         if task.status == .done { return Theme.success }
+        if task.status == .pause { return Color.white.opacity(0.35) }
         return kind.color
     }
 }
